@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="System"?>
+<table>
+    <database></database>
+    <name>signals</name>
+    <ddl>CREATE TABLE signals (id INTEGER PRIMARY KEY AUTOINCREMENT, sensor_id INTEGER, designation VARCHAR (255), data_offset INTEGER, data_length INTEGER, description TEXT);</ddl>
+    <columns>
+        <column>
+            <name>id</name>
+            <type>INTEGER</type>
+            <constraints>
+                <constraint>
+                    <type>PRIMARY KEY</type>
+                    <definition>PRIMARY KEY AUTOINCREMENT</definition>
+                </constraint>
+            </constraints>
+        </column>
+        <column>
+            <name>sensor_id</name>
+            <type>INTEGER</type>
+        </column>
+        <column>
+            <name>designation</name>
+            <type>VARCHAR</type>
+        </column>
+        <column>
+            <name>data_offset</name>
+            <type>INTEGER</type>
+        </column>
+        <column>
+            <name>data_length</name>
+            <type>INTEGER</type>
+        </column>
+        <column>
+            <name>description</name>
+            <type>TEXT</type>
+        </column>
+    </columns>
+    <rows>
+        <row>
+            <value column="0">1</value>
+            <value column="1">0</value>
+            <value column="2">PS_01_dt</value>
+            <value column="3">0</value>
+            <value column="4">3</value>
+            <value column="5" null="true"/>
+        </row>
+        <row>
+            <value column="0">2</value>
+            <value column="1">0</value>
+            <value column="2">PS_01_T</value>
+            <value column="3">3</value>
+            <value column="4">3</value>
+            <value column="5" null="true"/>
+        </row>
+        <row>
+            <value column="0">3</value>
+            <value column="1">0</value>
+            <value column="2">PS_01_R</value>
+            <value column="3">6</value>
+            <value column="4">3</value>
+            <value column="5" null="true"/>
+        </row>
+        <row>
+            <value column="0">4</value>
+            <value column="1">1</value>
+            <value column="2">O_W_2</value>
+            <value column="3">0</value>
+            <value column="4">16</value>
+            <value column="5" null="true"/>
+        </row>
+        <row>
+            <value column="0">5</value>
+            <value column="1">1</value>
+            <value column="2">O_W_3</value>
+            <value column="3">16</value>
+            <value column="4">16</value>
+            <value column="5" null="true"/>
+        </row>
+    </rows>
+</table>
