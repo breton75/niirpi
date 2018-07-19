@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+extern SvSQLITE* SQLITE;
+
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow)
@@ -17,8 +19,8 @@ MainWindow::MainWindow(QWidget *parent) :
                               << "Тип интерфейса"
                               << "Интерфейс"
                               << "Протокол"
-                              << "Смещение (бит)"
-                              << "Размер (бит)");
+                              << "Размер (бит)"
+                              << "Смещение (бит)");
   
   ui->treeWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
   ui->treeWidget->setEditTriggers(0);
@@ -36,27 +38,58 @@ MainWindow::~MainWindow()
   delete ui;
 }
 
+bool MainWindow::init()
+{
+  try {
+    
+    SQLITE = new SvSQLITE(this, "config.db");
+    QSqlError serr = SQLITE->connectToDB();
+    
+    if(serr.type() != QSqlError::NoError) _exception.raise(serr.databaseText());
+
+    return true;
+    
+  }
+  
+  catch(SvException& e) {
+    
+    log << svlog::Critical << e.error << svlog::endl;
+    return false;
+  }
+  
+  
+}
+
 bool MainWindow::readConfig(QString& filename)
 {
   try {
     
-    ui->treeWidget->clear();
-
-    QFile file(filename);
-    if (!file.open(QFile::ReadOnly | QFile::Text))
-        _exception.raise(tr("Cannot read file %1:\n%2.")
-                             .arg(filename)
-                             .arg(file.errorString()));
-
+    QSqlQuery* q = new QSqlQuery(SQLITE->db);
+    serr = SQLITE->execSQL(SQL_SELECT_FROM_SENSORS, q);
     
-    XbelReader reader(ui->treeWidget);
+    if(serr.type() != QSqlError::NoError) _exception.raise(serr.text());
     
-    if(!reader.read(&file))
-      _exception.raise(tr("Parse error in file %1:\n\n%2")
-                       .arg(filename)
-                       .arg(reader.errorString()));
-        
-    statusBar()->showMessage(tr("File loaded"), 2000);
+    
+    while(q->next()) {
+      
+      QVector<QVariant> data;
+      
+      data << q->value("id")
+           << q->value("sensor_name")
+           << q->value("ifc_type_name")
+           << q->value("ifc_protocol_name")
+           << q->value("ifc_name")
+           << q->value("data_type")
+           << q->value("data_length");
+
+              
+      TreeItem* item = new TreeItem()
+      ui->treeWidget->addTopLevelItem();
+      
+      
+      
+    }
+    
     
     return true;
     

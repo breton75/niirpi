@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml
+QT       += core gui xml sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,9 +27,10 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     ../../svlib/sv_log.cpp \
-    xbelreader.cpp \
-    xbelwriter.cpp \
-    ../../svlib/sv_settings.cpp
+    ../../svlib/sv_settings.cpp \
+    ../../svlib/sv_sqlite.cpp \
+    treeitem.cpp \
+    treemodel.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -37,7 +38,11 @@ HEADERS += \
     ../../svlib/sv_log.h \
     xbelreader.h \
     xbelwriter.h \
-    ../../svlib/sv_settings.h
+    ../../svlib/sv_settings.h \
+    ../../svlib/sv_sqlite.h \
+    defs.h \
+    treeitem.h \
+    treemodel.h
 
 FORMS += \
         mainwindow.ui
