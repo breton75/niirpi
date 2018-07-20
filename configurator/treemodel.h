@@ -50,19 +50,18 @@
 
 //#include "../../svlib/sv_sqlite.h"
 #include "defs.h"
+#include "treeitem.h"
 
 class TreeItem;
 
-//! [0]
 class TreeModel : public QAbstractItemModel
 {
     Q_OBJECT
 
 public:
-    TreeModel(const QStringList &headers, int projectId, QObject *parent = 0);
-    TreeModel(int headersCount, int projectId, QObject *parent = 0);
+    TreeModel(const QStringList &headers, QObject *parent = 0);
+    TreeModel(int headersCount, QObject *parent = 0);
     ~TreeModel();
-//! [0] //! [1]
 
     QVariant data(const QModelIndex &index, int role) const Q_DECL_OVERRIDE;
     QVariant headerData(int section, Qt::Orientation orientation,
@@ -74,9 +73,8 @@ public:
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
-//! [1]
 
-//! [2]
+    
     Qt::ItemFlags flags(const QModelIndex &index) const Q_DECL_OVERRIDE;
 //    bool setData(const QModelIndex &index, const QVariant &value,
 //                 int role = Qt::EditRole) Q_DECL_OVERRIDE;
@@ -92,19 +90,16 @@ public:
     bool removeRows(int position, int rows,
                     const QModelIndex &parent = QModelIndex()) Q_DECL_OVERRIDE;
     
-    TreeItem* ItemFormIndex(const QModelIndex &index) const;
+    TreeItem *rootItem(){ return _rootItem; }
+    TreeItem* itemFormIndex(const QModelIndex &index) const;
 
 private:
 //    void setupModelData(TreeItem *parent);
     TreeItem *getItem(const QModelIndex &index) const;
 
-    TreeItem *rootItem;
-    
-    int projectId;
-    int projectState;
+    TreeItem *_rootItem = nullptr;
     
     
 };
-//! [2]
 
 #endif // TREEMODEL_H

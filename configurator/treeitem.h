@@ -45,13 +45,36 @@
 #include <QVariant>
 #include <QVector>
 
+enum ItemTypes
+{
+  itSensors = 65537,
+  itSensor,
+  itSensorId,
+  itSensorName,
+  itSensorIfcType,
+  itSensorIfcProtocol,
+  itSensorIfcName,
+  itSensorDataType,
+  itSensorDataLength,
+  itSensorParams,
+  itSensorDescription,
+  itSignals,
+  itSignal,
+  itSignalId,
+  itSignalName,
+  itSignalDataLenght,
+  itSignalOffset,
+  itSignalType,
+  itSignalDescription,
+  itUndefined
+};
+
 struct ItemInfo
 {
+  ItemInfo() { }
+  ItemInfo(int type, QString fieldName) { this->type = type; this->fieldName = fieldName; }
   int type = -1;
   QString fieldName = "";
-//  int task_id = -1;
-//  bool is_main_task = false;
-//  int task_state = -1;
 };
     
 

@@ -45,40 +45,36 @@
 
 //extern SvSQLITE* PGDB;
 
-TreeModel::TreeModel(const QStringList &headers, int projectId, QObject *parent)
+TreeModel::TreeModel(const QStringList &headers, QObject *parent)
     : QAbstractItemModel(parent)
 {
-  this->projectId = projectId;  
-  
   QVector<QVariant> rootData;
   foreach (QString header, headers)
     rootData << header.remove(0, 1);
 
-  rootItem = new TreeItem(rootData);
+  _rootItem = new TreeItem(rootData);
 //  setupModelData(/*data.split(QString("\n")), */rootItem);
 }
 
-TreeModel::TreeModel(int headersCount, int projectId, QObject *parent)
+TreeModel::TreeModel(int headersCount, QObject *parent)
     : QAbstractItemModel(parent)
 {
-  this->projectId = projectId;  
-  
   QVector<QVariant> rootData;
   for(int i = 0; i < headersCount; i++)
     rootData << QString::number(i);
 
-  rootItem = new TreeItem(rootData);
+  _rootItem = new TreeItem(rootData);
 //  setupModelData(/*data.split(QString("\n")), */rootItem);
 }
 
 TreeModel::~TreeModel()
 {
-    delete rootItem;
+    delete _rootItem;
 }
 
 int TreeModel::columnCount(const QModelIndex & /* parent */) const
 {
-    return rootItem->columnCount();
+    return _rootItem->columnCount();
 }
 //! [2]
 
@@ -86,7 +82,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid()) return QVariant();
     
-//    if (role != Qt::DisplayRole && role != Qt::EditRole)
+//    if (role != Qt::DissplayRole && role != Qt::EditRole)
 //        return QVariant();
     TreeItem *item = getItem(index);;
     switch(role)
@@ -96,70 +92,79 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         return item->data(index.column());
         break;
           
-      case Qt::FontRole:
-      {  
+      case Qt::FontRole: {  
+        
         QFont font;
-        if(item->is_main_row or (item->info(index.column()).type == itTaskSum))
+        if((item->is_main_row && (item->info(index.column()).type != itSensorParams)) 
+           || (item->info(index.column()).type == itSignalName))
           font.setBold(true);
 
-        if(item->info(index.column()).type == itEmployeeLoadFact)
-          if(item->item_state == TaskOnWork) font.setItalic(true);
+//        if(item->info(index.column()).type == itEmployeeLoadFact)
+//          if(item->item_state == TaskOnWork) font.setItalic(true);
 
         return font;
       }
         
-      case Qt::TextAlignmentRole:
-        if (index.column() >= HEADERS_GENERAL_MAIN_COUNT - 2)
-        {
-          return Qt::AlignCenter;
+      case Qt::TextAlignmentRole: {
+        
+        QStringList h = QString(TREE_HEADERS).split(';');
+        
+        if (index.column() < h.count()) {
+          
+          if(QString(h.at(index.column())).at(0) == '|') return int(Qt::AlignCenter | Qt::AlignVCenter);
+          else if(QString(h.at(index.column())).at(0) == '>') return int(Qt::AlignRight | Qt::AlignVCenter);
+          else return int(Qt::AlignLeft | Qt::AlignVCenter);
         }
-        break;
+      }
         
       case Qt::ForegroundRole:
       {
         QBrush color;
-        if(item->info(index.column()).type == itTaskSum)
-          color.setColor(Qt::blue);
+         color.setColor(Qt::black);
+         
+//        if(item->info(index.column()).type == itTaskSum)
+//          color.setColor(Qt::blue);
 
-        else if(item->info(index.column()).type == itEmployeeLoadFact)
-//        {
-          if(item->item_state == TaskOnWork) color.setColor(Qt::red);
-//          else color.setColor(Qt::black);
-//        }
+//        else if(item->info(index.column()).type == itEmployeeLoadFact)
+////        {
+//          if(item->item_state == TaskOnWork) color.setColor(Qt::red);
+////          else color.setColor(Qt::black);
+////        }
         return color;
       }
         
       case Qt::BackgroundRole:
-        if(item->info(index.column()).type == itTaskSum)
-        {
-            QBrush color(QColor(255, 255, 207));
+        if(item->is_main_row) {
+          
+            QBrush color(QColor(240, 240, 240));
             return color;
         }
-        else if(item->info(index.column()).type == itTaskSumFact)
-        {
-            QBrush color(QColor(170, 255, 255));
-            return color;
-        }
+        
+//        else if(item->info(index.column()).type == itTaskSumFact)
+//        {
+//            QBrush color(QColor(170, 255, 255));
+//            return color;
+//        }
         break; 
         
       case Qt::DecorationRole:
         if(index.column() == 0)
         {
-          switch (item->item_state)
+          switch (item->info(index.column()).type)
           {
-            case TaskNew:
+            case itSensor:
               return QIcon(":/munich/icons/munich-icons/ico/blue/task_kp.ico");
               break;
               
-            case TaskOnWork:
+            case itSignal:
               return QIcon(":/munich/icons/munich-icons/ico/blue/task_onwork.ico");
               break;
               
-            case TaskPaused:
+            case itSignalType:
               return QIcon(":/munich/icons/munich-icons/ico/blue/task_paused.ico");
               break;
               
-            case TaskDone:
+            case itSensorIfcName:
               return QIcon(":/tree/icons/tick.png");
               break;
               
@@ -185,16 +190,18 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
     
     Qt::ItemFlags flags =  QAbstractItemModel::flags(index);
     
-    if(projectState != ProjectNew) return flags ;
+    return flags;
     
-    switch (item->info(index.column()).type)
-    {
-      case itTaskName:
-      case itTaskBegin:
-      case itTaskLaboriousness:
-      case itEmployeeLoadPlan:
-        return flags |= Qt::ItemIsEditable;
-    }
+//    if(projectState != ProjectNew) return flags ;
+    
+//    switch (item->info(index.column()).type)
+//    {
+//      case itTaskName:
+//      case itTaskBegin:
+//      case itTaskLaboriousness:
+//      case itEmployeeLoadPlan:
+//        return flags |= Qt::ItemIsEditable;
+//    }
 }
 //! [3]
 
@@ -206,17 +213,17 @@ TreeItem *TreeModel::getItem(const QModelIndex &index) const
         if (item)
             return item;
     }
-    return rootItem;
+    return _rootItem;
 }
 
-TreeItem *TreeModel::ItemFormIndex(const QModelIndex &index) const
+TreeItem *TreeModel::itemFormIndex(const QModelIndex &index) const
 {
     if (index.isValid()) {
         TreeItem *item = static_cast<TreeItem*>(index.internalPointer());
         if (item)
             return item;
     }
-    return rootItem;
+    return _rootItem;
 }
 
 QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
@@ -227,7 +234,7 @@ QVariant TreeModel::headerData(int section, Qt::Orientation orientation,
   switch (role)
   {
     case Qt::DisplayRole:
-      return rootItem->data(section);
+      return _rootItem->data(section);
 //      break;
       
     case Qt::FontRole:
@@ -271,7 +278,7 @@ bool TreeModel::insertColumns(int position, int columns, const QModelIndex &pare
     bool success;
 
     beginInsertColumns(parent, position, position + columns - 1);
-    success = rootItem->insertColumns(position, columns);
+    success = _rootItem->insertColumns(position, columns);
     endInsertColumns();
 
     return success;
@@ -283,7 +290,7 @@ bool TreeModel::insertRows(int position, int rows, const QModelIndex &parent)
     bool success;
 
     beginInsertRows(parent, position, position + rows - 1);
-    success = parentItem->insertChildren(position, rows, rootItem->columnCount());
+    success = parentItem->insertChildren(position, rows, _rootItem->columnCount());
     endInsertRows();
 
     return success;
@@ -298,7 +305,7 @@ QModelIndex TreeModel::parent(const QModelIndex &index) const
     TreeItem *childItem = getItem(index);
     TreeItem *parentItem = childItem->parent();
 
-    if (parentItem == rootItem)
+    if (parentItem == _rootItem)
         return QModelIndex();
 
     return createIndex(parentItem->childNumber(), 0, parentItem);
@@ -310,10 +317,10 @@ bool TreeModel::removeColumns(int position, int columns, const QModelIndex &pare
     bool success;
 
     beginRemoveColumns(parent, position, position + columns - 1);
-    success = rootItem->removeColumns(position, columns);
+    success = _rootItem->removeColumns(position, columns);
     endRemoveColumns();
 
-    if (rootItem->columnCount() == 0)
+    if (_rootItem->columnCount() == 0)
         removeRows(0, rowCount());
 
     return success;
@@ -427,7 +434,7 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
     if (role != Qt::EditRole || orientation != Qt::Horizontal)
         return false;
 
-    bool result = rootItem->setData(section, value);
+    bool result = _rootItem->setData(section, value);
 
     if (result)
         emit headerDataChanged(orientation, section, section);

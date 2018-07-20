@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QFileInfo>
+#include <QDebug>
 //#include <QXmlStreamReader>
 //#include <QXmlReader>
 //#include <QtXml>
@@ -35,6 +36,8 @@ public:
   
   svlog::SvLog log;
   
+  bool init();
+  
 private:
   Ui::MainWindow *ui;
   
@@ -42,6 +45,8 @@ private:
   
   QString _config_file_name = "config.xml";
 
+  QString _config_path;
+  
   QMenu *fileMenu;
   QMenu *helpMenu;
   QAction *openAct;
@@ -50,14 +55,16 @@ private:
   QAction *aboutAct;
   QAction *aboutQtAct;
   
+  TreeModel* _model;
+  TreeItem* rootItem;
+  
   void createActions();
   void createMenus();
   
-  bool init();
-  bool readConfig(QString &filename);
+  
+  bool readConfig();
   
 public slots:
-//    void open();
     void saveAs();
     void about();
   
