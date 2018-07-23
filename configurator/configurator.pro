@@ -35,7 +35,8 @@ SOURCES += \
     ../../svlib/sv_settings.cpp \
     ../../svlib/sv_sqlite.cpp \
     treeitem.cpp \
-    treemodel.cpp
+    treemodel.cpp \
+    sv_sensor.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -47,7 +48,12 @@ HEADERS += \
     ../../svlib/sv_sqlite.h \
     defs.h \
     treeitem.h \
-    treemodel.h
+    treemodel.h \
+    sv_sensor.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    sv_device.ui
+
+RESOURCES += \
+    res.qrc

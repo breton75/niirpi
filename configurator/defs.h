@@ -15,8 +15,11 @@
                                 "sensors.description as sensor_description " CR \
                                 "FROM sensors " CR \
                                 "LEFT JOIN ifc_types ON sensors.ifc_type = ifc_types.id " CR \
-                                "LEFT JOIN ifc_protocols ON sensors.ifc_protocol = ifc_protocols.id " CR \
-                                "ORDER BY sensor_name ASC"
+                                "LEFT JOIN ifc_protocols ON sensors.ifc_protocol = ifc_protocols.id " CR
+                                
+#define SQL_SELECT_SENSORS_LIST (SQL_SELECT_FROM_SENSORS "ORDER BY sensor_name ASC")
+#define SQL_SELECT_ONE_SENSOR (SQL_SELECT_FROM_SENSORS " WHERE id = %1")
+
 
 
 #define SQL_SELECT_FROM_SIGNALS "SELECT signals.id as signal_id, " CR \
@@ -26,6 +29,15 @@
                                 "signals.description as signal_description " CR \
                                 "FROM signals " CR \
                                 "WHERE sensor_id = %1 "
+
+#define SQL_NEW_SENSOR "INSERT INTO sensors (designation, ifc_type, " CR \
+                       "ifc_name, ifc_protocol, data_type, data_length, description)" CR \
+                       "VALUES ('%1', %2, '%3', %4, %5, %6, '%7');"
+
+#define SQL_SELECT_IFC_TYPES "SELECT id, designation FROM ifc_types ORDER BY designation"
+
+#define SQL_SELECT_IFC_PROTOCOLS "SELECT id, designation FROM ifc_protocols ORDER BY designation"
+
 
 
 #endif // DEFS_H

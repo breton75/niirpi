@@ -21,6 +21,8 @@
 #include "defs.h"
 #include "treeitem.h"
 #include "treemodel.h"
+#include "sv_sensor.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -48,12 +50,27 @@ private:
   QString _config_path;
   
   QMenu *fileMenu;
+  QMenu *configMenu;
   QMenu *helpMenu;
+  
   QAction *openAct;
   QAction *saveAsAct;
   QAction *exitAct;
   QAction *aboutAct;
   QAction *aboutQtAct;
+  
+  QAction *actionNewSensor;
+  QAction *actionEditSensor;
+  QAction *actionDeleteSensor;
+  QAction *actionNewSignal;
+  QAction *actionEditSignal;
+  QAction *actionDeleteSignal;
+  QAction *actionNewRepository;
+  QAction *actionEditRepository;
+  QAction *actionDeleteRepository;
+  QAction *actionPp;
+//  QAction *action;
+  
   
   TreeModel* _model;
   TreeItem* rootItem;
@@ -61,12 +78,25 @@ private:
   void createActions();
   void createMenus();
   
-  
   bool readConfig();
+  
+  
+private slots:
+  void newSensor();
+  void editSensor();
+  void deleteSensor();
+  void newSignal();
+  void editSignal();
+  void deleteSignal();
+  void newRepository();
+  void editRepository();
+  void deleteRepository();  
+  
   
 public slots:
     void saveAs();
     void about();
+
   
 };
 

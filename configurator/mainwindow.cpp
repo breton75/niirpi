@@ -2,12 +2,16 @@
 #include "ui_mainwindow.h"
 
 extern SvSQLITE* SQLITE;
+extern SvSensor *SENSOR_UI;
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow)
 {
   ui->setupUi(this);
+  
+  actionPp = new QAction(this);
+  actionPp->setText("Pp");
   
   setWindowTitle(QString("Конфигуратор стойки v.%1").arg(APP_VERSION));
   
@@ -16,11 +20,40 @@ MainWindow::MainWindow(QWidget *parent) :
   QString s = AppParams::loadLayout(this);
   
   ui->treeView->header()->setSectionResizeMode(QHeaderView::Stretch);
-
-  
   ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
   ui->treeView->setEditTriggers(0);
   ui->treeView->setLineWidth(5);
+  
+  createActions();
+  
+//  fileMenu = menuBar()->addMenu(tr("&File"));
+//  fileMenu->addAction(openAct);
+//  fileMenu->addAction(saveAsAct);
+//  fileMenu->addAction(exitAct);
+
+//  menuBar()->addSeparator();
+  
+  configMenu = menuBar()->addMenu(tr("&Configuration"));
+  configMenu->addAction(actionNewSensor);
+  configMenu->addAction(actionEditSensor);
+  configMenu->addAction(actionDeleteSensor);
+  configMenu->addSeparator();
+  configMenu->addAction(actionNewSignal);
+  configMenu->addAction(actionEditSignal);
+  configMenu->addAction(actionDeleteSignal);
+  configMenu->addSeparator();
+  configMenu->addAction(actionNewRepository);
+  configMenu->addAction(actionEditRepository);
+  configMenu->addAction(actionDeleteRepository);
+  configMenu->addSeparator();
+  
+//  helpMenu = menuBar()->addMenu(tr("&Help"));
+//  helpMenu->addAction(aboutAct);
+//  helpMenu->addAction(aboutQtAct);
+
+  
+//  QMetaObject::connectSlotsByName(this);
+  
   
 #ifdef APP_DEBUG
   _config_path = QString("D:/c++/NIIRPI/configurator/config.db");
@@ -244,20 +277,83 @@ void MainWindow::about()
 
 void MainWindow::createActions()
 {
-    openAct = new QAction(tr("&Open..."), this);
-    openAct->setShortcuts(QKeySequence::Open);
-//    connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
+  QIcon icon;
+  /** *********** actions ************** **/
+  /// датчики
+  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/project_add.ico"), QSize(), QIcon::Normal, QIcon::Off);
+  actionNewSensor = new QAction(this);
+  actionNewSensor->setObjectName(QStringLiteral("actionNewSensor"));
+  actionNewSensor->setIcon(icon);
+  actionNewSensor->setText("Новое устройство");
+  connect(actionNewSensor, &QAction::triggered, this, &MainWindow::newSensor);
+  
+  
+  
+  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/project.ico"), QSize(), QIcon::Normal, QIcon::Off);
+  actionEditSensor = new QAction(this);
+  actionEditSensor->setObjectName(QStringLiteral("actionEditSensor"));
+  actionEditSensor->setIcon(icon);
+  actionEditSensor->setText("Редактировать");
+  
+  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/cross.ico"), QSize(), QIcon::Normal, QIcon::Off);
+  actionDeleteSensor = new QAction(this);
+  actionDeleteSensor->setObjectName(QStringLiteral("actionDeleteSensor"));
+  actionDeleteSensor->setIcon(icon);
+  actionDeleteSensor->setText("Удалить устройство");
 
-    saveAsAct = new QAction(tr("&Save As..."), this);
-    saveAsAct->setShortcuts(QKeySequence::SaveAs);
-    connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+  /// сигналы
+  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/task_add.ico"), QSize(), QIcon::Normal, QIcon::Off);
+  actionNewSignal = new QAction(this);
+  actionNewSignal->setObjectName(QStringLiteral("actionNewSignal"));
+  actionNewSignal->setIcon(icon);
+  actionNewSignal->setText("Новое устройство");
+  
+  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/task.ico"), QSize(), QIcon::Normal, QIcon::Off);
+  actionEditSignal = new QAction(this);
+  actionEditSignal->setObjectName(QStringLiteral("actionEditSignal"));
+  actionEditSignal->setIcon(icon);
+  actionEditSignal->setText("Редактировать");
+  
+  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/cross.ico"), QSize(), QIcon::Normal, QIcon::Off);
+  actionDeleteSignal = new QAction(this);
+  actionDeleteSignal->setObjectName(QStringLiteral("actionDeleteSignal"));
+  actionDeleteSignal->setIcon(icon);
+  actionDeleteSignal->setText("Удалить устройство");
 
-    exitAct = new QAction(tr("E&xit"), this);
-    exitAct->setShortcuts(QKeySequence::Quit);
-    connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
+  /// репозитоии
+  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/add.ico"), QSize(), QIcon::Normal, QIcon::Off);
+  actionNewRepository = new QAction(this);
+  actionNewRepository->setObjectName(QStringLiteral("actionNewRepository"));
+  actionNewRepository->setIcon(icon);
+  actionNewRepository->setText("Новый репозиторий");
+  
+  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/issue.ico"), QSize(), QIcon::Normal, QIcon::Off);
+  actionEditRepository = new QAction(this);
+  actionEditRepository->setObjectName(QStringLiteral("actionEditRepository"));
+  actionEditRepository->setIcon(icon);
+  actionEditRepository->setText("Редактировать");
+  
+  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/cross.ico"), QSize(), QIcon::Normal, QIcon::Off);
+  actionDeleteRepository = new QAction(this);
+  actionDeleteRepository->setObjectName(QStringLiteral("actionDeleteRepository"));
+  actionDeleteRepository->setIcon(icon);
+  actionDeleteRepository->setText("Удалить репозиторий");
+  
+  /// служебные
+  openAct = new QAction(tr("&Open..."), this);
+  openAct->setShortcuts(QKeySequence::Open);
+//  connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
 
-    aboutQtAct = new QAction(tr("About &Qt"), this);
-    connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+  saveAsAct = new QAction(tr("&Save As..."), this);
+  saveAsAct->setShortcuts(QKeySequence::SaveAs);
+  connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+
+  exitAct = new QAction(tr("E&xit"), this);
+  exitAct->setShortcuts(QKeySequence::Quit);
+  connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
+
+  aboutQtAct = new QAction(tr("About &Qt"), this);
+  connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 }
 
 void MainWindow::createMenus()
@@ -272,3 +368,51 @@ void MainWindow::createMenus()
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutQtAct);
 }
+
+
+void MainWindow::newSensor()
+{
+  SENSOR_UI = new SvSensor(this);
+  
+}
+
+void MainWindow::editSensor()
+{
+
+}
+
+void MainWindow::deleteSensor()
+{
+
+}
+
+void MainWindow::newSignal()
+{
+
+}
+
+void MainWindow::editSignal()
+{
+
+}
+
+void MainWindow::deleteSignal()
+{
+
+}
+
+void MainWindow::newRepository()
+{
+
+}
+
+void MainWindow::editRepository()
+{
+
+}
+
+void MainWindow::deleteRepository()
+{
+
+}
+
