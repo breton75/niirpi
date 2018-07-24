@@ -442,4 +442,42 @@ bool TreeModel::setHeaderData(int section, Qt::Orientation orientation,
     return result;
 }
 
+void TreeModel::clear()
+{
+  if(_rootItem->childCount())
+  {
+    QList<TreeItem*> items = QList<TreeItem*>();
+    QList<TreeItem*> del = QList<TreeItem*>();
 
+    items << _rootItem;
+    del   << _rootItem;
+    while(items.count()) {
+      
+      TreeItem* parent = items.first();
+      
+      for(int i = 0; i < parent->childCount(); i++) {
+        
+        del   << parent->child(i);
+        items << parent->child(i);
+      }
+      
+      items.pop_front();
+      
+    }
+
+    // удаляем начиная с конца, т.е. сначала удаляем наследников, потом, 
+    // поднимаясь наверх - предков, пока не дойдем до rootItem
+    beginResetModel();
+
+    while(1) {
+      
+//      qDebug() << del.last()->data(0).toString();
+      del.last()->removeChildren(0, del.last()->childCount());
+      if(_rootItem == del.last()) break;
+      del.pop_back();
+    }
+//    rootItem->removeChildren(0, 3/*rootItem->childCount()*/); //! !!!!!!!!!
+    endResetModel();
+    
+  }
+}

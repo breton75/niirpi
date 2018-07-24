@@ -47,6 +47,12 @@ MainWindow::MainWindow(QWidget *parent) :
   configMenu->addAction(actionDeleteRepository);
   configMenu->addSeparator();
   
+  ui->mainToolBar->addActions(QList<QAction*>() << actionNewSensor << actionEditSensor << actionDeleteSensor);
+  ui->mainToolBar->addSeparator();
+  ui->mainToolBar->addActions(QList<QAction*>() << actionNewSignal << actionEditSignal << actionDeleteSignal);
+  ui->mainToolBar->addSeparator();
+  ui->mainToolBar->addActions(QList<QAction*>() << actionNewRepository << actionEditRepository << actionDeleteRepository);
+  
 //  helpMenu = menuBar()->addMenu(tr("&Help"));
 //  helpMenu->addAction(aboutAct);
 //  helpMenu->addAction(aboutQtAct);
@@ -147,7 +153,7 @@ bool MainWindow::readConfig()
       root->child(child_count)->setData(3, QString("\nИнтерфейс:\t%1\nПротокол:\t%2\nПорт:\t%3\nТип данных:\t%4")
                                           .arg(q->value("sensor_ifc_type_name").toString())
                                           .arg(q->value("sensor_ifc_protocol_name").toString())
-                                          .arg(q->value("sensor_ifc_name").toString())
+                                          .arg(q->value("sensor_ifc_port_name").toString())
                                           .arg(q->value("sensor_data_type").toString()));
       root->child(child_count)->setInfo(3, ItemInfo(itSensorParams, ""));
       
@@ -287,57 +293,63 @@ void MainWindow::createActions()
   actionNewSensor->setText("Новое устройство");
   connect(actionNewSensor, &QAction::triggered, this, &MainWindow::newSensor);
   
-  
-  
   icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/project.ico"), QSize(), QIcon::Normal, QIcon::Off);
   actionEditSensor = new QAction(this);
   actionEditSensor->setObjectName(QStringLiteral("actionEditSensor"));
   actionEditSensor->setIcon(icon);
   actionEditSensor->setText("Редактировать");
-  
+  connect(actionEditSensor, &QAction::triggered, this, &MainWindow::editSensor);
+    
   icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/cross.ico"), QSize(), QIcon::Normal, QIcon::Off);
   actionDeleteSensor = new QAction(this);
   actionDeleteSensor->setObjectName(QStringLiteral("actionDeleteSensor"));
   actionDeleteSensor->setIcon(icon);
   actionDeleteSensor->setText("Удалить устройство");
-
+  connect(actionDeleteSensor, &QAction::triggered, this, &MainWindow::deleteSensor);
+  
   /// сигналы
   icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/task_add.ico"), QSize(), QIcon::Normal, QIcon::Off);
   actionNewSignal = new QAction(this);
   actionNewSignal->setObjectName(QStringLiteral("actionNewSignal"));
   actionNewSignal->setIcon(icon);
-  actionNewSignal->setText("Новое устройство");
+  actionNewSignal->setText("Новый сигнал");
+  connect(actionNewSignal, &QAction::triggered, this, &MainWindow::newSignal);
   
   icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/task.ico"), QSize(), QIcon::Normal, QIcon::Off);
   actionEditSignal = new QAction(this);
   actionEditSignal->setObjectName(QStringLiteral("actionEditSignal"));
   actionEditSignal->setIcon(icon);
   actionEditSignal->setText("Редактировать");
+  connect(actionEditSignal, &QAction::triggered, this, &MainWindow::editSignal);
   
   icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/cross.ico"), QSize(), QIcon::Normal, QIcon::Off);
   actionDeleteSignal = new QAction(this);
   actionDeleteSignal->setObjectName(QStringLiteral("actionDeleteSignal"));
   actionDeleteSignal->setIcon(icon);
-  actionDeleteSignal->setText("Удалить устройство");
-
+  actionDeleteSignal->setText("Удалить сигнал");
+  connect(actionDeleteSensor, &QAction::triggered, this, &MainWindow::deleteSensor);
+  
   /// репозитоии
   icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/add.ico"), QSize(), QIcon::Normal, QIcon::Off);
   actionNewRepository = new QAction(this);
   actionNewRepository->setObjectName(QStringLiteral("actionNewRepository"));
   actionNewRepository->setIcon(icon);
   actionNewRepository->setText("Новый репозиторий");
+  connect(actionNewRepository, &QAction::triggered, this, &MainWindow::newRepository);
   
   icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/issue.ico"), QSize(), QIcon::Normal, QIcon::Off);
   actionEditRepository = new QAction(this);
   actionEditRepository->setObjectName(QStringLiteral("actionEditRepository"));
   actionEditRepository->setIcon(icon);
   actionEditRepository->setText("Редактировать");
+  connect(actionEditRepository, &QAction::triggered, this, &MainWindow::editRepository);
   
   icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/cross.ico"), QSize(), QIcon::Normal, QIcon::Off);
   actionDeleteRepository = new QAction(this);
   actionDeleteRepository->setObjectName(QStringLiteral("actionDeleteRepository"));
   actionDeleteRepository->setIcon(icon);
   actionDeleteRepository->setText("Удалить репозиторий");
+  connect(actionDeleteRepository, &QAction::triggered, this, &MainWindow::deleteRepository);
   
   /// служебные
   openAct = new QAction(tr("&Open..."), this);
@@ -373,12 +385,40 @@ void MainWindow::createMenus()
 void MainWindow::newSensor()
 {
   SENSOR_UI = new SvSensor(this);
+  int result = SENSOR_UI->exec();
+  switch (result) {
+    
+    case SvSensor::Error:
+      log << svlog::Critical << SENSOR_UI->lastError() << svlog::endl;
+      break;
+      
+    case SvSensor::Accepted:
+      _model->clear();
+      readConfig();
+      break;
+    
+  }
+  delete SENSOR_UI;
   
 }
 
 void MainWindow::editSensor()
 {
-
+  SENSOR_UI = new SvSensor(this, _model->itemFormIndex(ui->treeView->currentIndex())->id);
+  int result = SENSOR_UI->exec();
+  switch (result) {
+    
+    case SvSensor::Error:
+      log << svlog::Critical << SENSOR_UI->lastError() << svlog::endl;
+      break;
+      
+    case SvSensor::Accepted:
+      _model->clear();
+      readConfig();
+      break;
+    
+  }
+  delete SENSOR_UI;
 }
 
 void MainWindow::deleteSensor()

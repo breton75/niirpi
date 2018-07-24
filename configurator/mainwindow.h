@@ -53,6 +53,8 @@ private:
   QMenu *configMenu;
   QMenu *helpMenu;
   
+  QToolBar* toolBar;
+  
   QAction *openAct;
   QAction *saveAsAct;
   QAction *exitAct;

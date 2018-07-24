@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml sql
+QT       += core gui xml sql serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -36,7 +36,8 @@ SOURCES += \
     ../../svlib/sv_sqlite.cpp \
     treeitem.cpp \
     treemodel.cpp \
-    sv_sensor.cpp
+    sv_sensor.cpp \
+    sv_oht.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -49,11 +50,13 @@ HEADERS += \
     defs.h \
     treeitem.h \
     treemodel.h \
-    sv_sensor.h
+    sv_sensor.h \
+    sv_oht.h \
+    sv_idevice.h
 
 FORMS += \
         mainwindow.ui \
-    sv_device.ui
+    sv_sensor.ui
 
 RESOURCES += \
     res.qrc

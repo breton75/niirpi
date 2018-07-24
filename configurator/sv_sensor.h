@@ -6,8 +6,9 @@
 #include <QSqlError>
 #include <QMessageBox>
 #include <QDebug>
+#include <QFileDialog>
 
-#include "ui_sv_device.h"
+#include "ui_sv_sensor.h"
 //#include "sv_dev_model.h"
 //#include "sv_select_model_dialog.h"
 //#include "sv_select_brand_dialog.h"
@@ -48,7 +49,6 @@ class SvSensor : public QDialog
     
      
   private slots:
-    void config();
     void selectDriver();
     
   public slots:
@@ -66,20 +66,19 @@ class SvSensor : public QDialog
     int _ifc_type = -1;
     int _ifc_protocol = -1;
     int _data_type = -1;
-    
     QString _ifc_port = "";
     QString _class_name = "";
     QString _brand_name = "";
     QString _driver_path = "";
     QString _description = "";
-    QByteArray _config = QByteArray();
     
     QString _last_error = "";
     
     
-    void  loadIfcTypes();    
-    void  loadIfcProtocols();
-    void  loadDataTypes();   
+    void loadIfcTypes();    
+    void loadIfcProtocols();
+    void loadDataTypes();
+    
 
 };
 

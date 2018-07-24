@@ -93,6 +93,8 @@ public:
     TreeItem *rootItem(){ return _rootItem; }
     TreeItem* itemFormIndex(const QModelIndex &index) const;
 
+    void clear();
+    
 private:
 //    void setupModelData(TreeItem *parent);
     TreeItem *getItem(const QModelIndex &index) const;
