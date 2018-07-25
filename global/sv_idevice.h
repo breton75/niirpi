@@ -3,23 +3,21 @@
 
 #include <QObject>
 #include <QMutex>
-#include <QDialog>
 #include <QMap>
 #include <QDateTime>
-#include <QTextEdit>
 #include <QMetaType>
-#include <QSerialPort>
+#include <QtSerialPort/QSerialPort>
 
 #include "../../svlib/sv_log.h"
 
 namespace idev {
 
-  enum SensorTypes {
+  enum DeviceTypes {
     sdtUndefined = -1,
     sdtOHT
   };
 
-  struct SensorConfig
+  struct DeviceConfig
   {
     int id = -1;
     QString name = "";
@@ -33,57 +31,52 @@ namespace idev {
     
   };
   
-  struct SerialPortParams {
-    SerialPortParams() {  }
-    SerialPortParams(idev::SensorTypes type) { dev_type = type; }
-    idev::SensorTypes dev_type;
-    QString description = "";
-    QString name = "COM1";
-    quint32 baudrate = 9600;
-    QSerialPort::DataBits databits = QSerialPort::Data8;
-    QSerialPort::Parity parity = QSerialPort::NoParity;
-    QSerialPort::StopBits stopbits = QSerialPort::OneStop;
-    QSerialPort::FlowControl flowcontrol = QSerialPort::NoFlowControl;
-  };
-  
-  class SvISensor;
+  class SvIDevice;
 
 }
 
 
-/** ----------- SvISensor ------------ **/
-class idev::SvISensor : public QObject
+/** ----------- SvIDevice ------------ **/
+class idev::SvIDevice : public QObject
 {
     Q_OBJECT
     
 public:
-  SvISensor() { }
+  SvIDevice() { }
   
   virtual ~SvIDevice() { }
   
-  virtual idev::SensorTypes type() const { return idev::sdtUndefined; }
+  virtual idev::DeviceTypes type() const { return idev::sdtUndefined; }
   
   
   void setLastError(const QString& lastError) { _last_error = lastError; }
   QString lastError() { return _last_error; }
   
-  void setSensorType(idev::SensorTypes type) { _type = type; }
-  idev::SensorTypes sensorType() { return _type; }
+  void setDeviceType(idev::DeviceTypes type) { _type = type; }
+  idev::DeviceTypes deviceType() { return _type; }
   
   void setOpened(bool isOpened) { _isOpened = isOpened; }
   bool isOpened() { return _isOpened; }
   
   void setActive(bool isActive) { _isActive = isActive; }
   bool isActive() { return _isActive; }
+  
+  bool isReadyRead() { return _is_ready_read; }
+  
+  virtual bool write(const QByteArray* data) = 0;
+  virtual QByteArray read() = 0;
+  
+  
 
 protected:
   quint32 _id;
-  idev::SensorTypes _type;
+  idev::DeviceTypes _type;
   
-  bool _isOpened = false;
   QString _last_error;
   
+  bool _isOpened = false;
   bool _isActive = true;
+  bool _is_ready_read = false;
   
 public slots:
   virtual bool open() = 0;

@@ -36,8 +36,7 @@ SOURCES += \
     ../../svlib/sv_sqlite.cpp \
     treeitem.cpp \
     treemodel.cpp \
-    sv_sensor.cpp \
-    sv_oht.cpp
+    sv_sensor.cpp
 
 HEADERS += \
         mainwindow.h \

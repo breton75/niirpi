@@ -1,10 +1,20 @@
-QT -= gui
+#-------------------------------------------------
+#
+# Project created by QtCreator 2018-07-24T16:20:58
+#
+#-------------------------------------------------
 
-CONFIG += c++11 console serialport
-CONFIG -= app_bundle
+QT       += dbus serialport
+
+QT       -= gui
+
+TARGET = oht
+TEMPLATE = lib
+DESTDIR = ../stand_server_deploy
+DEFINES += OHT_LIBRARY
 
 # The following define makes your compiler emit warnings if you use
-# any feature of Qt which as been marked deprecated (the exact warnings
+# any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
@@ -14,13 +24,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-SOURCES += main.cpp \
-    ../../svlib/sv_log.cpp \
-    ../../svlib/sv_sqlite.cpp \
-    ../global/sv_oht.cpp
+SOURCES += \
+        oht.cpp
 
 HEADERS += \
-    ../../svlib/sv_exception.h \
-    ../../svlib/sv_log.h \
-    ../../svlib/sv_sqlite.h \
-    ../global/sv_idevice.h
+        oht.h \
+    ../global/sv_idevice.h \
+    ../global/dev_defs.h
+
+unix {
+    target.path = /usr/lib
+    INSTALLS += target
+}
