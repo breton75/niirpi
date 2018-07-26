@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 
 extern SvSQLITE* SQLITE;
-extern SvSensor *SENSOR_UI;
+extern SvDeviceEditor *DEVICE_UI;
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -34,9 +34,9 @@ MainWindow::MainWindow(QWidget *parent) :
 //  menuBar()->addSeparator();
   
   configMenu = menuBar()->addMenu(tr("&Configuration"));
-  configMenu->addAction(actionNewSensor);
-  configMenu->addAction(actionEditSensor);
-  configMenu->addAction(actionDeleteSensor);
+  configMenu->addAction(actionNewDevice);
+  configMenu->addAction(actionEditDevice);
+  configMenu->addAction(actionDeleteDevice);
   configMenu->addSeparator();
   configMenu->addAction(actionNewSignal);
   configMenu->addAction(actionEditSignal);
@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
   configMenu->addAction(actionDeleteRepository);
   configMenu->addSeparator();
   
-  ui->mainToolBar->addActions(QList<QAction*>() << actionNewSensor << actionEditSensor << actionDeleteSensor);
+  ui->mainToolBar->addActions(QList<QAction*>() << actionNewDevice << actionEditDevice << actionDeleteDevice);
   ui->mainToolBar->addSeparator();
   ui->mainToolBar->addActions(QList<QAction*>() << actionNewSignal << actionEditSignal << actionDeleteSignal);
   ui->mainToolBar->addSeparator();
@@ -123,7 +123,7 @@ bool MainWindow::readConfig()
       root->setInfo(i, ItemInfo());
     
     
-    QSqlError serr = SQLITE->execSQL(SQL_SELECT_FROM_SENSORS, q);
+    QSqlError serr = SQLITE->execSQL(SQL_SELECT_DEVICES_LIST, q);
     
     if(serr.type() != QSqlError::NoError) _exception.raise(serr.text());
     
@@ -134,31 +134,31 @@ bool MainWindow::readConfig()
       
       root->insertChildren(child_count, 1, column_count);
 
-      root->child(child_count)->id = q->value("sensor_id").toInt();
+      root->child(child_count)->id = q->value("device_id").toInt();
       root->child(child_count)->parent_id = root->id;
       root->child(child_count)->is_main_row = true; //q->value("task_type").toInt() == 1; //  q->value("parent_task_id").toInt() == -1;
 //        root->child(child_count)->item_state = q->value("last_state").toInt();
-      root->child(child_count)->item_type = itSensor;
+      root->child(child_count)->item_type = itDevice;
   
 
-      root->child(child_count)->setData(0, q->value("sensor_name"));
-      root->child(child_count)->setInfo(0, ItemInfo(itSensorName, "sensor_name"));
+      root->child(child_count)->setData(0, q->value("device_name"));
+      root->child(child_count)->setInfo(0, ItemInfo(itDeviceName, "device_name"));
       
-      root->child(child_count)->setData(1, q->value("sensor_data_length"));
-      root->child(child_count)->setInfo(1, ItemInfo(itSensorDataLength, "sensor_data_length"));
+      root->child(child_count)->setData(1, q->value("device_data_length"));
+      root->child(child_count)->setInfo(1, ItemInfo(itDeviceDataLength, "device_data_length"));
       
       root->child(child_count)->setData(2, QVariant());
       root->child(child_count)->setInfo(2, ItemInfo(itUndefined, ""));
       
       root->child(child_count)->setData(3, QString("\nИнтерфейс:\t%1\nПротокол:\t%2\nПорт:\t%3\nТип данных:\t%4")
-                                          .arg(q->value("sensor_ifc_type_name").toString())
-                                          .arg(q->value("sensor_ifc_protocol_name").toString())
-                                          .arg(q->value("sensor_ifc_port_name").toString())
-                                          .arg(q->value("sensor_data_type").toString()));
-      root->child(child_count)->setInfo(3, ItemInfo(itSensorParams, ""));
+                                          .arg(q->value("device_ifc_type_name").toString())
+                                          .arg(q->value("device_ifc_protocol_name").toString())
+                                          .arg(q->value("device_ifc_port_name").toString())
+                                          .arg(q->value("device_data_type").toString()));
+      root->child(child_count)->setInfo(3, ItemInfo(itDeviceParams, ""));
       
-      root->child(child_count)->setData(4, q->value("sensor_description").toString());
-      root->child(child_count)->setInfo(4, ItemInfo(itSensorDescription, "sensor_description"));
+      root->child(child_count)->setData(4, q->value("device_description").toString());
+      root->child(child_count)->setInfo(4, ItemInfo(itDeviceDescription, "device_description"));
       
 //      for (int column = 0; column < column_count; column++) {
         
@@ -166,14 +166,14 @@ bool MainWindow::readConfig()
         
 //        ItemInfo inf;
         
-//        if(field_name == "sensor_id")                     inf.type = itSensorId;
-//        else if(field_name == "sensor_name")              inf.type = itSensorName;
-//        else if(field_name == "sensor_ifc_type_name")     inf.type = itSensorIfcType;
-//        else if(field_name == "sensor_ifc_protocol_name") inf.type = itSensorIfcProtocol;
-//        else if(field_name == "sensor_ifc_name")          inf.type = itSensorIfcName;
-//        else if(field_name == "sensor_data_type")         inf.type = itSensorDataType;
-//        else if(field_name == "sensor_data_length")       inf.type = itSensorDataLength;
-//        else if(field_name == "sensor_description")       inf.type = itSensorDescription;
+//        if(field_name == "sensor_id")                     inf.type = itDeviceId;
+//        else if(field_name == "sensor_name")              inf.type = itDeviceName;
+//        else if(field_name == "sensor_ifc_type_name")     inf.type = itDeviceIfcType;
+//        else if(field_name == "sensor_ifc_protocol_name") inf.type = itDeviceIfcProtocol;
+//        else if(field_name == "sensor_ifc_name")          inf.type = itDeviceIfcName;
+//        else if(field_name == "sensor_data_type")         inf.type = itDeviceDataType;
+//        else if(field_name == "sensor_data_length")       inf.type = itDeviceDataLength;
+//        else if(field_name == "sensor_description")       inf.type = itDeviceDescription;
 //        else                                              inf.type = itUndefined;
         
 //        inf.fieldName = field_name;
@@ -287,25 +287,25 @@ void MainWindow::createActions()
   /** *********** actions ************** **/
   /// датчики
   icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/project_add.ico"), QSize(), QIcon::Normal, QIcon::Off);
-  actionNewSensor = new QAction(this);
-  actionNewSensor->setObjectName(QStringLiteral("actionNewSensor"));
-  actionNewSensor->setIcon(icon);
-  actionNewSensor->setText("Новое устройство");
-  connect(actionNewSensor, &QAction::triggered, this, &MainWindow::newSensor);
+  actionNewDevice = new QAction(this);
+  actionNewDevice->setObjectName(QStringLiteral("actionNewDevice"));
+  actionNewDevice->setIcon(icon);
+  actionNewDevice->setText("Новое устройство");
+  connect(actionNewDevice, &QAction::triggered, this, &MainWindow::newDevice);
   
   icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/project.ico"), QSize(), QIcon::Normal, QIcon::Off);
-  actionEditSensor = new QAction(this);
-  actionEditSensor->setObjectName(QStringLiteral("actionEditSensor"));
-  actionEditSensor->setIcon(icon);
-  actionEditSensor->setText("Редактировать");
-  connect(actionEditSensor, &QAction::triggered, this, &MainWindow::editSensor);
+  actionEditDevice = new QAction(this);
+  actionEditDevice->setObjectName(QStringLiteral("actionEditDevice"));
+  actionEditDevice->setIcon(icon);
+  actionEditDevice->setText("Редактировать");
+  connect(actionEditDevice, &QAction::triggered, this, &MainWindow::editDevice);
     
   icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/cross.ico"), QSize(), QIcon::Normal, QIcon::Off);
-  actionDeleteSensor = new QAction(this);
-  actionDeleteSensor->setObjectName(QStringLiteral("actionDeleteSensor"));
-  actionDeleteSensor->setIcon(icon);
-  actionDeleteSensor->setText("Удалить устройство");
-  connect(actionDeleteSensor, &QAction::triggered, this, &MainWindow::deleteSensor);
+  actionDeleteDevice = new QAction(this);
+  actionDeleteDevice->setObjectName(QStringLiteral("actionDeleteDevice"));
+  actionDeleteDevice->setIcon(icon);
+  actionDeleteDevice->setText("Удалить устройство");
+  connect(actionDeleteDevice, &QAction::triggered, this, &MainWindow::deleteDevice);
   
   /// сигналы
   icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/task_add.ico"), QSize(), QIcon::Normal, QIcon::Off);
@@ -327,7 +327,7 @@ void MainWindow::createActions()
   actionDeleteSignal->setObjectName(QStringLiteral("actionDeleteSignal"));
   actionDeleteSignal->setIcon(icon);
   actionDeleteSignal->setText("Удалить сигнал");
-  connect(actionDeleteSensor, &QAction::triggered, this, &MainWindow::deleteSensor);
+  connect(actionDeleteDevice, &QAction::triggered, this, &MainWindow::deleteDevice);
   
   /// репозитоии
   icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/add.ico"), QSize(), QIcon::Normal, QIcon::Off);
@@ -382,46 +382,46 @@ void MainWindow::createMenus()
 }
 
 
-void MainWindow::newSensor()
+void MainWindow::newDevice()
 {
-  SENSOR_UI = new SvSensor(this);
-  int result = SENSOR_UI->exec();
+  DEVICE_UI = new SvDeviceEditor(this);
+  int result = DEVICE_UI->exec();
   switch (result) {
     
-    case SvSensor::Error:
-      log << svlog::Critical << SENSOR_UI->lastError() << svlog::endl;
+    case SvDeviceEditor::Error:
+      log << svlog::Critical << DEVICE_UI->lastError() << svlog::endl;
       break;
       
-    case SvSensor::Accepted:
+    case SvDeviceEditor::Accepted:
       _model->clear();
       readConfig();
       break;
     
   }
-  delete SENSOR_UI;
+  delete DEVICE_UI;
   
 }
 
-void MainWindow::editSensor()
+void MainWindow::editDevice()
 {
-  SENSOR_UI = new SvSensor(this, _model->itemFormIndex(ui->treeView->currentIndex())->id);
-  int result = SENSOR_UI->exec();
+  DEVICE_UI = new SvDeviceEditor(this, _model->itemFormIndex(ui->treeView->currentIndex())->id);
+  int result = DEVICE_UI->exec();
   switch (result) {
     
-    case SvSensor::Error:
-      log << svlog::Critical << SENSOR_UI->lastError() << svlog::endl;
+    case SvDeviceEditor::Error:
+      log << svlog::Critical << DEVICE_UI->lastError() << svlog::endl;
       break;
       
-    case SvSensor::Accepted:
+    case SvDeviceEditor::Accepted:
       _model->clear();
       readConfig();
       break;
     
   }
-  delete SENSOR_UI;
+  delete DEVICE_UI;
 }
 
-void MainWindow::deleteSensor()
+void MainWindow::deleteDevice()
 {
 
 }

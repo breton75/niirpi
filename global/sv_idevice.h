@@ -8,13 +8,11 @@
 #include <QMetaType>
 #include <QtSerialPort/QSerialPort>
 
-#include "../../svlib/sv_log.h"
-
 namespace idev {
 
   enum DeviceTypes {
     sdtUndefined = -1,
-    sdtOHT
+    sdtOHT_Gamma12700 = 1
   };
 
   struct DeviceConfig

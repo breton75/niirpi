@@ -13,7 +13,9 @@
 
 
 #include "../global/sv_idevice.h"
-#include "../global/dev_defs.h"h"
+#include "../global/dev_defs.h"
+#include "../../svlib/sv_exception.h"
+
 
 #define P_SERIAL_BAUDRATE "baudrate"
 #define P_SERIAL_PORTNAME "portname"
@@ -24,14 +26,14 @@
 #define P_DEVICE_PROTOCOL "protocol"
 
 
-idev::SvIDevice* OHTSHARED_EXPORT create_device(const QString& params_string);
+idev::SvIDevice* /*OHTSHARED_EXPORT*/ create_device(const QString& params_string);
 
-class OHTSHARED_EXPORT SvOht: public idev::SvIDevice
+class /*OHTSHARED_EXPORT*/ SvOHT: public idev::SvIDevice
 {
   
 public:
-  SvOht();
-  ~SvOht();
+  SvOHT(idev::DeviceConfig deviceConfig, SerialPortParams serialParams);
+  ~SvOHT();
   
   
   idev::DeviceTypes type() const { return idev::sdtOHT; }
@@ -44,6 +46,7 @@ public:
   bool write(const QByteArray* data);
   QByteArray read();
   
+  void setSerialPortParams(const SerialPortParams& params);
   
 private:
   QSerialPort _serial;

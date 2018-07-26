@@ -1,19 +1,12 @@
-#include "sv_sensor.h"
+#include "sv_device_type_editor.h"
 
-SvSensor *SENSOR_UI;
-//extern SvDevModel* DEVMODEL_UI;
+SvDeviceTypeEditor *DEVICE_TYPE_UI;
 extern SvSQLITE *SQLITE;
-//extern SvSelectModelDialog* SELECTMODELDIALOG_UI;
-//extern SvDeviceConfiguration* DEVICE_CONFIG_UI;
 
 
-//extern SvZone* ZONE_UI;
-//extern SvNewZone* NEW_ZONE_UI;
-//extern SvZonesList *ZONELIST_UI;
-
-SvSensor::SvSensor(QWidget *parent, int deviceId) :
+SvDeviceTypeEditor::SvDeviceTypeEditor(QWidget *parent, int typeId) :
   QDialog(parent),
-  ui(new Ui::SvSensorDialog)
+  ui(new Ui::SvDeviceTypeDialog)
 {
   ui->setupUi(this); 
 
@@ -26,7 +19,7 @@ SvSensor::SvSensor(QWidget *parent, int deviceId) :
   if(showMode == smEdit) {
     
     QSqlQuery* q = new QSqlQuery(SQLITE->db);
-    QSqlError serr = SQLITE->execSQL(QString(SQL_SELECT_ONE_SENSOR).arg(deviceId), q);
+    QSqlError serr = SQLITE->execSQL(QString(SQL_SELECT_ONE_DEVICE_TYPE).arg(typeId), q);
     
     if(QSqlError::NoError != serr.type()) {  
 
@@ -40,54 +33,56 @@ SvSensor::SvSensor(QWidget *parent, int deviceId) :
     
     q->first();
     
-    _id = q->value("sensor_id").toInt();
-    _sensor_name = q->value("sensor_name").toString();
-    _ifc_type = q->value("sensor_ifc_type").toInt();
-    _ifc_port = q->value("sensor_ifc_port_name").toString();
-    _ifc_protocol = q->value("sensor_ifc_protocol").toInt();
-    _data_type = q->value("sensor_data_type").toInt();
-    _data_length = q->value("sensor_data_length").toInt();
-    _driver_path = q->value("driver_lib_path").toString();
-    _description = q->value("sensor_description").toString(); 
+    _device_type_id = q->value("device_type_id").toInt(); 
+    _device_type_name = q->value("device_name").toString();
+    _device_type_ifc_type_id = q->value("device_type_ifc_type_id").toInt();
+    _device_type_ifc_type_name = q->value("device_type_ifc_type_name").toString();
+    _device_type_ifc_protocol_id = q->value("device_type_ifc_protocol_id").toInt();
+    _device_type_ifc_protocol_name = q->value("device_type_ifc_protocol_name").toString();
+    _device_type_ifc_port_name = q->value("device_type_ifc_port_name").toString();
+    _device_type_data_type = q->value("device_type_data_type").toInt();
+    _device_type_data_length = q->value("device_type_data_length").toInt();
+    _device_type_driver_path = q->value("device_type_driver_lib_path").toString();
+    _device_type_description = q->value("device_type_description").toString(); 
     
     delete q;
     
-    ui->cbIfc->setCurrentIndex(_ifc_type);
-    ui->cbProtocol->setCurrentIndex(_ifc_protocol);
+    ui->cbIfc->setCurrentIndex(_device_type_ifc_type_id);
+    ui->cbProtocol->setCurrentIndex(_device_type_ifc_protocol_id);
     
   }
   
    
   
   if(showMode == smNew) this->setWindowTitle("Новое устройство");
-  else this->setWindowTitle(QString("Устройство - %1").arg(_sensor_name));
+  else this->setWindowTitle(QString("Устройство - %1").arg(_device_name));
   
   if(showMode == smNew) ui->editID->setText("<Новый>");
   else  ui->editID->setText(QString::number(_id));
   
-  ui->editSensorName->setText(_sensor_name);
-  ui->editDriver->setText(_driver_path);
+  ui->editSensorName->setText(_device_type_name);
+  ui->editDriver->setText(_device_type_driver_path);
 //  ui->cbPort->set;
   ui->editDriver->setText(_driver_path);
-  ui->textDescription->setText(_description);
+  ui->textDescription->setText(_device_type_description);
   
   connect(ui->bnSave, &QPushButton::clicked, this, &QDialog::accept);
   connect(ui->bnCancel, &QPushButton::clicked, this, &QDialog::reject);
-  connect(ui->bnSelectDriver, &QPushButton::clicked, this, &SvSensor::selectDriver);
+  connect(ui->bnSelectDriver, &QPushButton::clicked, this, &SvDeviceTypeEditor::selectDriver);
 //  connect(ui->bnConfig, SIGNAL(clicked()), this, SLOT(config()));
   
   this->setModal(true);
   this->show();
 }
 
-SvSensor::~SvSensor()
+SvDeviceTypeEditor::~SvDeviceTypeEditor()
 {
   this->close();
   delete ui;
 }
 
 
-void SvSensor::loadIfcTypes()
+void SvDeviceTypeEditor::loadIfcTypes()
 {
   QSqlQuery* q = new QSqlQuery(SQLITE->db);
   QSqlError serr = SQLITE->execSQL(QString(SQL_SELECT_IFC_TYPES), q);
@@ -108,7 +103,7 @@ void SvSensor::loadIfcTypes()
   
 }
 
-void SvSensor::loadIfcProtocols()
+void SvDeviceTypeEditor::loadIfcProtocols()
 {
   QSqlQuery* q = new QSqlQuery(SQLITE->db);
   if(QSqlError::NoError != SQLITE->execSQL(QString(SQL_SELECT_IFC_PROTOCOLS), q).type()) {
@@ -127,13 +122,13 @@ void SvSensor::loadIfcProtocols()
   
 }
 
-void SvSensor::loadDataTypes()
+void SvDeviceTypeEditor::loadDataTypes()
 {
   ui->cbDataType->addItem("Аналог", 0);
   ui->cbDataType->addItem("Цифровой", 1);
 }
 
-void SvSensor::accept()
+void SvDeviceTypeEditor::accept()
 {
   try {
     
@@ -154,7 +149,7 @@ void SvSensor::accept()
   
 //  /* конец проверок */
   
-    _sensor_name = ui->editSensorName->text();
+    _device_name = ui->editSensorName->text();
     _ifc_type = ui->cbIfc->currentData().toInt();
     _ifc_protocol = ui->cbProtocol->currentData().toInt();
     _ifc_port = ui->cbPort->currentText();
@@ -167,8 +162,8 @@ void SvSensor::accept()
       
       case smNew: {
         
-        QSqlError serr = SQLITE->execSQL(QString(SQL_NEW_SENSOR)
-                                         .arg(_sensor_name)
+        QSqlError serr = SQLITE->execSQL(QString(SQL_NEW_DEVICE_TYPE)
+                                         .arg(_device_name)
                                          .arg(_ifc_type)
                                          .arg(_ifc_port)
                                          .arg(_ifc_protocol)
@@ -183,14 +178,15 @@ void SvSensor::accept()
         
       case smEdit: {
         
-        QSqlError serr = SQLITE->execSQL(QString(SQL_NEW_SENSOR)
-                                         .arg(_sensor_name)
+        QSqlError serr = SQLITE->execSQL(QString(SQL_UPDATE_DEVICE_TYPE)
+                                         .arg(_device_name)
                                          .arg(_ifc_type)
                                          .arg(_ifc_port)
                                          .arg(_ifc_protocol)
                                          .arg(_data_type)
                                          .arg(_data_length)
-                                         .arg(_description));
+                                         .arg(_description)
+                                         .arg(_id));
         
         if(QSqlError::NoError != serr.type()) _exception.raise(serr.text());
   
@@ -210,7 +206,7 @@ void SvSensor::accept()
   
 }
 
-void SvSensor::selectDriver()
+void SvDeviceTypeEditor::selectDriver()
 {
   QString fileName = QFileDialog::getOpenFileName(this, tr("Open driver library"),
                                        QDir::currentPath(), tr("library files (*.dll)"));

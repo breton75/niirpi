@@ -18,10 +18,10 @@
 #include "../../svlib/sv_settings.h"
 #include "../../svlib/sv_sqlite.h"
 
-#include "defs.h"
+#include "../global/sql_defs.h"
 #include "treeitem.h"
 #include "treemodel.h"
-#include "sv_sensor.h"
+#include "sv_device_editor.h"
 
 
 namespace Ui {
@@ -61,9 +61,9 @@ private:
   QAction *aboutAct;
   QAction *aboutQtAct;
   
-  QAction *actionNewSensor;
-  QAction *actionEditSensor;
-  QAction *actionDeleteSensor;
+  QAction *actionNewDevice;
+  QAction *actionEditDevice;
+  QAction *actionDeleteDevice;
   QAction *actionNewSignal;
   QAction *actionEditSignal;
   QAction *actionDeleteSignal;
@@ -84,9 +84,9 @@ private:
   
   
 private slots:
-  void newSensor();
-  void editSensor();
-  void deleteSensor();
+  void newDevice();
+  void editDevice();
+  void deleteDevice();
   void newSignal();
   void editSignal();
   void deleteSignal();

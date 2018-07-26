@@ -95,7 +95,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
       case Qt::FontRole: {  
         
         QFont font;
-        if((item->is_main_row && (item->info(index.column()).type != itSensorParams)) 
+        if((item->is_main_row && (item->info(index.column()).type != itDeviceParams)) 
            || (item->info(index.column()).type == itSignalName))
           font.setBold(true);
 
@@ -152,7 +152,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         {
           switch (item->info(index.column()).type)
           {
-            case itSensor:
+            case itDevice:
               return QIcon(":/munich/icons/munich-icons/ico/blue/task_kp.ico");
               break;
               
@@ -164,7 +164,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
               return QIcon(":/munich/icons/munich-icons/ico/blue/task_paused.ico");
               break;
               
-            case itSensorIfcName:
+            case itDeviceIfcName:
               return QIcon(":/tree/icons/tick.png");
               break;
               

@@ -1,5 +1,5 @@
-#ifndef SV_SENSOR_H
-#define SV_SENSOR_H
+#ifndef SV_DEVICETYPEEDITOR_H
+#define SV_DEVICETYPEEDITOR_H
 
 #include <QDialog>
 #include <QString>
@@ -8,7 +8,7 @@
 #include <QDebug>
 #include <QFileDialog>
 
-#include "ui_sv_sensor.h"
+#include "ui_sv_device_type_editor.h"
 //#include "sv_dev_model.h"
 //#include "sv_select_model_dialog.h"
 //#include "sv_select_brand_dialog.h"
@@ -20,16 +20,14 @@
 #include "../../svlib/sv_log.h"
 #include "../../svlib/sv_exception.h"
 
-#include "defs.h"
-
-//#include "sv_zone_list.h"
+#include "../global/sql_defs.h"
 
 
 namespace Ui {
-  class SvDeviceDialog;
+  class SvDeviceTypeDialog;
 }
 
-class SvSensor : public QDialog
+class SvDeviceTypeEditor : public QDialog
 {
     Q_OBJECT
     
@@ -37,13 +35,11 @@ class SvSensor : public QDialog
     enum Result { Accepted = QDialog::Accepted, Rejected = QDialog::Rejected, Error = -1 };
     enum ShowMode { smNew = 0, smEdit = 1 };
                     
-    explicit SvSensor(QWidget *parent,
-                      int deviceId = -1);
- 
-    
-    ~SvSensor();
+    explicit SvDeviceTypeEditor(QWidget *parent, int typeId = -1);
+    ~SvDeviceTypeEditor();
     
     QString lastError() { return _last_error; }
+    int id() { return _id; }
     
     int showMode;
     
@@ -56,21 +52,21 @@ class SvSensor : public QDialog
     
     
   private:
-    Ui::SvSensorDialog *ui;
+    Ui::SvDeviceTypeDialog *ui;
     
     SvException _exception;
     
-    int     _id = -1;
-    QString _sensor_name = "";
-    qint32 _data_length = 0;
-    int _ifc_type = -1;
-    int _ifc_protocol = -1;
-    int _data_type = -1;
-    QString _ifc_port = "";
-    QString _class_name = "";
-    QString _brand_name = "";
-    QString _driver_path = "";
-    QString _description = "";
+    int     _device_type_id = -1;
+    QString _device_type_name = "";
+    int     _device_type_ifc_type_id = -1;
+    QString _device_type_ifc_type_name = "";
+    int     _device_type_ifc_protocol_id = -1;
+    QString _device_type_ifc_protocol_name = "";
+    QString _device_type_ifc_port_name = "";
+    int     _device_type_data_type = -1;
+    quint32 _device_type_data_length = 0;
+    QString _device_type_driver_path = "";
+    QString _device_type_description = "";
     
     QString _last_error = "";
     
@@ -82,4 +78,4 @@ class SvSensor : public QDialog
 
 };
 
-#endif // SV_SENSOR_H
+#endif // SV_DEVICETYPEEDITOR_H

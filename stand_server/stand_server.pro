@@ -1,6 +1,7 @@
 QT -= gui
+QT += serialport sql
 
-CONFIG += c++11 console serialport
+CONFIG += c++11 console
 CONFIG -= app_bundle
 
 # The following define makes your compiler emit warnings if you use
@@ -15,12 +16,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += main.cpp \
-    ../../svlib/sv_log.cpp \
     ../../svlib/sv_sqlite.cpp \
-    ../global/sv_oht.cpp
+    ../oht/sv_oht.cpp \
+    ../../svlib/sv_clog.cpp
 
 HEADERS += \
     ../../svlib/sv_exception.h \
-    ../../svlib/sv_log.h \
     ../../svlib/sv_sqlite.h \
-    ../global/sv_idevice.h
+    ../global/sv_idevice.h \
+    ../oht/sv_oht.h \
+    ../../svlib/sv_clog.h \
+    ../global/sql_defs.h

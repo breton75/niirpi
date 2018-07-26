@@ -16,7 +16,6 @@ struct SerialPortParams {
   QSerialPort::FlowControl flowcontrol = QSerialPort::NoFlowControl;
   QString description = "";
 };
-
   
   const QList<int> Baudrates = {75, 115, 134, 150, 300, 600, 1200, 1800, 2400, 4800, 7200, 9600, 14400, 19200, 38400, 57600, 115200, 128000};
   

@@ -31,31 +31,34 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    ../../svlib/sv_log.cpp \
     ../../svlib/sv_settings.cpp \
     ../../svlib/sv_sqlite.cpp \
     treeitem.cpp \
     treemodel.cpp \
-    sv_sensor.cpp
+    sv_device_type_editor.cpp \
+    sv_device_editor.cpp \
+    ../../svlib/sv_log.cpp
 
 HEADERS += \
         mainwindow.h \
     ../../svlib/sv_exception.h \
-    ../../svlib/sv_log.h \
     xbelreader.h \
     xbelwriter.h \
     ../../svlib/sv_settings.h \
     ../../svlib/sv_sqlite.h \
-    defs.h \
+    ../global/sql_defs.h \
     treeitem.h \
     treemodel.h \
-    sv_sensor.h \
     sv_oht.h \
-    sv_idevice.h
+    sv_idevice.h \
+    sv_device_type_editor.h \
+    sv_device_editor.h \
+    ../../svlib/sv_log.h
 
 FORMS += \
         mainwindow.ui \
-    sv_sensor.ui
+    sv_device_type_editor.ui \
+    sv_device_editor.ui
 
 RESOURCES += \
     res.qrc

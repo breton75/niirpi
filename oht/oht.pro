@@ -10,7 +10,8 @@ QT       -= gui
 
 TARGET = oht
 TEMPLATE = lib
-DESTDIR = ../stand_server_deploy
+#DESTDIR = ../stand_server_deploy
+#DLLDESTDIR = ../stand_server_deploy
 DEFINES += OHT_LIBRARY
 
 # The following define makes your compiler emit warnings if you use
@@ -30,6 +31,7 @@ SOURCES += \
 HEADERS += \
         oht.h \
     ../global/sv_idevice.h \
+    ../global/dev_defs.h \
     ../global/dev_defs.h
 
 unix {

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SvSensorDialog</class>
- <widget class="QDialog" name="SvSensorDialog">
+ <class>SvDeviceDialog</class>
+ <widget class="QDialog" name="SvDeviceDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>364</width>
-    <height>515</height>
+    <width>430</width>
+    <height>473</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Device</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
     <widget class="QGroupBox" name="gbGeneral">
      <property name="font">
@@ -38,13 +38,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>16777215</height>
            </size>
           </property>
@@ -98,13 +98,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>16777215</height>
            </size>
           </property>
@@ -123,7 +123,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="editSensorName">
+         <widget class="QLineEdit" name="editDeviceName">
           <property name="font">
            <font>
             <weight>50</weight>
@@ -134,10 +134,25 @@
         </item>
        </layout>
       </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="gbGeneral_2">
+     <property name="font">
+      <font>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="title">
+      <string>Тип устройства</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <layout class="QHBoxLayout" name="layoutModelName">
+       <layout class="QHBoxLayout" name="layoutModelName_2">
         <item>
-         <widget class="QLabel" name="lblModelName">
+         <widget class="QLabel" name="lblModelName_2">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -146,13 +161,95 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Тип</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="cbDeviceType">
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="bnEditDeviceType">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="res.qrc">
+            <normaloff>:/munich/icons/munich-icons/ico/blue/project_kp.ico</normaloff>:/munich/icons/munich-icons/ico/blue/project_kp.ico</iconset>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="bnNewDeviceType">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="res.qrc">
+            <normaloff>:/munich/icons/munich-icons/ico/blue/project_add.ico</normaloff>:/munich/icons/munich-icons/ico/blue/project_add.ico</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="layoutID_3">
+        <item>
+         <widget class="QLabel" name="lblID_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>85</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>85</width>
             <height>16777215</height>
            </size>
           </property>
@@ -171,21 +268,33 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="cbIfc">
+         <widget class="QLineEdit" name="editDeviceIfc">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(209, 209, 209);</string>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="layoutClass">
+       <layout class="QHBoxLayout" name="layoutDevName_3">
         <item>
-         <widget class="QLabel" name="lblClass">
+         <widget class="QLabel" name="lblDevName_3">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -194,13 +303,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>16777215</height>
            </size>
           </property>
@@ -219,21 +328,33 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="cbProtocol">
+         <widget class="QLineEdit" name="editDeviceProtocol">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(209, 209, 209);</string>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="layoutBrand">
+       <layout class="QHBoxLayout" name="layoutID_4">
         <item>
-         <widget class="QLabel" name="lblBrand">
+         <widget class="QLabel" name="lblID_4">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -242,13 +363,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>16777215</height>
            </size>
           </property>
@@ -267,21 +388,33 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="cbPort">
+         <widget class="QLineEdit" name="editDevicePort">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(209, 209, 209);</string>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="layoutBrand_3">
+       <layout class="QHBoxLayout" name="layoutID_2">
         <item>
-         <widget class="QLabel" name="lblBrand_3">
+         <widget class="QLabel" name="lblID_2">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -290,13 +423,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>16777215</height>
            </size>
           </property>
@@ -315,21 +448,33 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="cbDataType">
+         <widget class="QLineEdit" name="editDeviceDataType">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(209, 209, 209);</string>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="layoutBrand_2">
+       <layout class="QHBoxLayout" name="layoutDevName_2">
         <item>
-         <widget class="QLabel" name="lblBrand_2">
+         <widget class="QLabel" name="lblDevName_2">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -338,13 +483,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>16777215</height>
            </size>
           </property>
@@ -363,24 +508,33 @@
          </widget>
         </item>
         <item>
-         <widget class="QSpinBox" name="spinDataLength">
+         <widget class="QLineEdit" name="editDeviceDataLength">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <weight>50</weight>
             <bold>false</bold>
            </font>
           </property>
-          <property name="value">
-           <number>64</number>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(209, 209, 209);</string>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
        </layout>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="layoutDriver">
+       <layout class="QHBoxLayout" name="layoutDevName_4">
         <item>
-         <widget class="QLabel" name="lblDriver">
+         <widget class="QLabel" name="lblDevName_4">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
             <horstretch>0</horstretch>
@@ -389,13 +543,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>85</width>
             <height>16777215</height>
            </size>
           </property>
@@ -414,7 +568,13 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="editDriver">
+         <widget class="QLineEdit" name="editDeviceDriverPath">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="font">
            <font>
             <weight>50</weight>
@@ -426,31 +586,6 @@
           </property>
           <property name="readOnly">
            <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="bnSelectDriver">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>30</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>...</string>
           </property>
          </widget>
         </item>
@@ -490,7 +625,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QTextEdit" name="textDescription"/>
+      <widget class="QTextEdit" name="textDeviceDescription"/>
      </item>
     </layout>
    </item>
@@ -558,13 +693,14 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>editSensorName</tabstop>
-  <tabstop>editDriver</tabstop>
+  <tabstop>editDeviceName</tabstop>
   <tabstop>bnSave</tabstop>
   <tabstop>bnCancel</tabstop>
-  <tabstop>textDescription</tabstop>
+  <tabstop>textDeviceDescription</tabstop>
   <tabstop>editID</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections/>
 </ui>
