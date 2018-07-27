@@ -7,7 +7,8 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QFileDialog>
-
+#include <QSerialPort>
+#include <QSerialPortInfo>
 
 //#include "sv_dev_model.h"
 //#include "sv_select_model_dialog.h"
@@ -19,7 +20,7 @@
 #include "../../svlib/sv_sqlite.h"
 #include "../../svlib/sv_log.h"
 #include "../../svlib/sv_exception.h"
-#include "sv_device_type_editor.h"
+#include "sv_kts_editor.h"
 
 #include "../global/sql_defs.h"
 
@@ -45,10 +46,10 @@ class SvDeviceEditor : public QDialog
     
      
   private slots:
-    void newDeviceType();
-    void editDeviceType();
+    void newKTS();
+    void editKTS();
     
-    void updateDeviceTypeInfo(int index);
+    void updateKTSInfo(int index);
     
   public slots:
     void accept() Q_DECL_OVERRIDE;
@@ -61,12 +62,12 @@ class SvDeviceEditor : public QDialog
     
     int     _id = -1;
     QString _device_name = "";
-    int _device_type_id = -1;
+    QString _device_port_name = "";
+    int _device_kts_id = -1;
     QString _device_type = "";
-    QString _device_ifc_type = "";
-    QString _device_ifc_protocol = "";
-    QString _device_ifc_port = "";
-    QString _device_data_type = "";
+    QString _device_ifc_name = "";
+    QString _device_protocol_name = "";
+    QString _device_data_type_name = "";
     QString _device_data_length = "";
     QString _device_driver_path = "";
     QString _device_description = "";
@@ -74,8 +75,8 @@ class SvDeviceEditor : public QDialog
     QString _last_error = "";
     
     
-    bool loadDeviceTypes();    
-
+    bool loadKTSs();    
+    void loadPorts();
 
     
 

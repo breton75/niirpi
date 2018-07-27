@@ -3,6 +3,9 @@
 #include <QLibrary>
 
 #include "../global/sv_idevice.h"
+#include "../global/sql_defs.h"
+#include "../global/dev_defs.h"
+
 #include "../oht/sv_oht.h"
 
 #include "../../svlib/sv_sqlite.h"
@@ -59,6 +62,7 @@ bool init()
 bool readConfig()
 {
   lout << clog::Time << "reading configuration" << clog::endl;
+  
   QSqlQuery* q = new QSqlQuery(SQLITE->db);
   
   try {
@@ -75,15 +79,50 @@ bool readConfig()
 //      root->setInfo(i, ItemInfo());
     
     
-    QSqlError serr = SQLITE->execSQL(SQL_SELECT_FROM_SENSORS, q);
+    QSqlError serr = SQLITE->execSQL(SQL_SELECT_DEVICES_LIST, q);
     
     if(serr.type() != QSqlError::NoError) _exception.raise(serr.text());
     
     // заполняем модель выбранными данными
     while(q->next()) { 
       
-      
-      DEVICES.append(new );
+      switch (idev::DeviceTypes(q->value("device_kts_id").toUInt())) {
+        
+        case idev::sdtOHT_Gamma12700:
+          
+          idev::DeviceConfig config;
+          SerialPortParams params;
+          
+          config.id = q->value("device_id").toInt();
+          config.name = q->value("device_name").toString();
+          config.kts_id = q->value("device_kts_id").toInt();
+          config.kts_name= q->value("device_kts_name").toString();
+          config.ifc_id = q->value("device_ifc_id").toInt();
+          config.ifc_name = q->value("device_ifc_name").toString();
+          config.protocol_id = q->value("device_protocol_id").toInt();
+          config.protocol_name = q->value("device_protocol_name").toString();
+          config.data_type = q->value("device_data_type").toInt();
+          config.data_type_name = q->value("device_data_type_name").toString();
+          config.data_length = q->value("device_data_length").toInt();
+          config.driver_lib_path = q->value("device_driver_lib_path").toString();
+          config.description = q->value("device_kts_description").toString();
+
+          params.portname = q->value("").to;
+          params.baudrate = q->value("").to;
+          params.databits = q->value("").to;
+          params.flowcontrol = q->value("").to;
+          params.parity = q->value("").to;
+          params.stopbits = q->value("").to;
+          params.description = q->value("").to;
+          
+          
+          DEVICES.append(new SvOHT());
+          break;
+          
+          
+        default:
+          break;
+      }
       
 //      root->child(child_count)->setData(0, q->value("sensor_name"));
 //      root->child(child_count)->setInfo(0, ItemInfo(itSensorName, "sensor_name"));

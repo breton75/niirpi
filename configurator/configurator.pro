@@ -35,9 +35,9 @@ SOURCES += \
     ../../svlib/sv_sqlite.cpp \
     treeitem.cpp \
     treemodel.cpp \
-    sv_device_type_editor.cpp \
     sv_device_editor.cpp \
-    ../../svlib/sv_log.cpp
+    ../../svlib/sv_log.cpp \
+    sv_kts_editor.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -51,14 +51,14 @@ HEADERS += \
     treemodel.h \
     sv_oht.h \
     sv_idevice.h \
-    sv_device_type_editor.h \
     sv_device_editor.h \
-    ../../svlib/sv_log.h
+    ../../svlib/sv_log.h \
+    sv_kts_editor.h
 
 FORMS += \
         mainwindow.ui \
-    sv_device_type_editor.ui \
-    sv_device_editor.ui
+    sv_device_editor.ui \
+    sv_kts_editor.ui
 
 RESOURCES += \
     res.qrc

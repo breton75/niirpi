@@ -1,5 +1,5 @@
-#ifndef SV_DEVICETYPEEDITOR_H
-#define SV_DEVICETYPEEDITOR_H
+#ifndef SV_KTSEDITOR_H
+#define SV_KTSEDITOR_H
 
 #include <QDialog>
 #include <QString>
@@ -8,7 +8,7 @@
 #include <QDebug>
 #include <QFileDialog>
 
-#include "ui_sv_device_type_editor.h"
+#include "ui_sv_kts_editor.h"
 //#include "sv_dev_model.h"
 //#include "sv_select_model_dialog.h"
 //#include "sv_select_brand_dialog.h"
@@ -24,10 +24,10 @@
 
 
 namespace Ui {
-  class SvDeviceTypeDialog;
+  class SvKTSDialog;
 }
 
-class SvDeviceTypeEditor : public QDialog
+class SvKTSEditor : public QDialog
 {
     Q_OBJECT
     
@@ -35,11 +35,11 @@ class SvDeviceTypeEditor : public QDialog
     enum Result { Accepted = QDialog::Accepted, Rejected = QDialog::Rejected, Error = -1 };
     enum ShowMode { smNew = 0, smEdit = 1 };
                     
-    explicit SvDeviceTypeEditor(QWidget *parent, int typeId = -1);
-    ~SvDeviceTypeEditor();
+    explicit SvKTSEditor(QWidget *parent, int id = -1);
+    ~SvKTSEditor();
     
     QString lastError() { return _last_error; }
-    int id() { return _id; }
+    int id() { return _kts_id; }
     
     int showMode;
     
@@ -52,30 +52,29 @@ class SvDeviceTypeEditor : public QDialog
     
     
   private:
-    Ui::SvDeviceTypeDialog *ui;
+    Ui::SvKTSDialog *ui;
     
     SvException _exception;
     
-    int     _device_type_id = -1;
-    QString _device_type_name = "";
-    int     _device_type_ifc_type_id = -1;
-    QString _device_type_ifc_type_name = "";
-    int     _device_type_ifc_protocol_id = -1;
-    QString _device_type_ifc_protocol_name = "";
-    QString _device_type_ifc_port_name = "";
-    int     _device_type_data_type = -1;
-    quint32 _device_type_data_length = 0;
-    QString _device_type_driver_path = "";
-    QString _device_type_description = "";
+    int     _kts_id = -1;
+    QString _kts_name = "";
+    int     _kts_ifc_id = -1;
+    QString _kts_ifc_name = "";
+    int     _kts_protocol_id = -1;
+    QString _kts_protocol_name = "";
+    int     _kts_data_type = -1;
+    quint32 _kts_data_length = 0;
+    QString _kts_driver_path = "";
+    QString _kts_description = "";
     
     QString _last_error = "";
     
     
-    void loadIfcTypes();    
-    void loadIfcProtocols();
+    void loadIfces();    
+    void loadProtocols();
     void loadDataTypes();
     
 
 };
 
-#endif // SV_DEVICETYPEEDITOR_H
+#endif // SV_KTSEDITOR_H

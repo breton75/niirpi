@@ -19,11 +19,15 @@ namespace idev {
   {
     int id = -1;
     QString name = "";
-    int ifc_type = -1;
-    QString ifc_type_name = "";
-    int ifc_protocol = -1;
-    QString ifc_protocol_name = "";
+    int kts_id = -1;
+    QString kts_name = "";
+    int ifc_id = -1;
+    QString ifc_name = "";
+    int protocol_id = -1;
+    QString protocol_name = "";
     int data_type = 1;  // digital
+    QString data_type_name = "";
+    int data_length = 0;
     QString driver_lib_path = "";
     QString description = "";
     

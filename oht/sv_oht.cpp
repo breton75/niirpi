@@ -57,7 +57,7 @@ idev::SvIDevice* /*OHTSHARED_EXPORT*/ create_device(const QString& params_string
 //    serial_params. = parser.value(P_SERIAL_);
 //    serial_params. = parser.value(P_SERIAL_);
     
-    device_config.ifc_protocol_name = parser.value(P_DEVICE_PROTOCOL).toUtf8();
+    device_config.protocol_name = parser.value(P_DEVICE_PROTOCOL).toUtf8();
       
   }
   

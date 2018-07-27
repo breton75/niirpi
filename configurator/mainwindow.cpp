@@ -151,10 +151,10 @@ bool MainWindow::readConfig()
       root->child(child_count)->setInfo(2, ItemInfo(itUndefined, ""));
       
       root->child(child_count)->setData(3, QString("\nИнтерфейс:\t%1\nПротокол:\t%2\nПорт:\t%3\nТип данных:\t%4")
-                                          .arg(q->value("device_ifc_type_name").toString())
-                                          .arg(q->value("device_ifc_protocol_name").toString())
-                                          .arg(q->value("device_ifc_port_name").toString())
-                                          .arg(q->value("device_data_type").toString()));
+                                          .arg(q->value("device_ifc_name").toString())
+                                          .arg(q->value("device_protocol_name").toString())
+                                          .arg(q->value("device_port_name").toString())
+                                          .arg(q->value("device_data_type_name").toString()));
       root->child(child_count)->setInfo(3, ItemInfo(itDeviceParams, ""));
       
       root->child(child_count)->setData(4, q->value("device_description").toString());
