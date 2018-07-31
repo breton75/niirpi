@@ -166,8 +166,6 @@ idev::SvIDevice* create_device(const QSqlQuery* q)
     return 0;
     
   }
-  
-  
 }
 
 bool openDevices()
@@ -189,6 +187,5 @@ bool openDevices()
            << clog::endl;
       
     }
-    
   }
 }

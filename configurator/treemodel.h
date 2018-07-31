@@ -101,6 +101,7 @@ private:
 
     TreeItem *_rootItem = nullptr;
     
+    QStringList _headers;
     
 };
 

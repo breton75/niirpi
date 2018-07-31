@@ -48,6 +48,8 @@
 TreeModel::TreeModel(const QStringList &headers, QObject *parent)
     : QAbstractItemModel(parent)
 {
+  _headers = headers;
+  
   QVector<QVariant> rootData;
   foreach (QString header, headers)
     rootData << header.remove(0, 1);
@@ -107,12 +109,10 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         
       case Qt::TextAlignmentRole: {
         
-        QStringList h = QString(TREE_HEADERS).split(';');
-        
-        if (index.column() < h.count()) {
+        if (index.column() < _headers.count()) {
           
-          if(QString(h.at(index.column())).at(0) == '|') return int(Qt::AlignCenter | Qt::AlignVCenter);
-          else if(QString(h.at(index.column())).at(0) == '>') return int(Qt::AlignRight | Qt::AlignVCenter);
+          if(QString(_headers.at(index.column())).at(0) == '|') return int(Qt::AlignCenter | Qt::AlignVCenter);
+          else if(QString(_headers.at(index.column())).at(0) == '>') return int(Qt::AlignRight | Qt::AlignVCenter);
           else return int(Qt::AlignLeft | Qt::AlignVCenter);
         }
       }

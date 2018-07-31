@@ -22,7 +22,7 @@
 #include "treeitem.h"
 #include "treemodel.h"
 #include "sv_device_editor.h"
-
+#include "sv_repositories.h"
 
 namespace Ui {
 class MainWindow;
@@ -67,10 +67,7 @@ private:
   QAction *actionNewSignal;
   QAction *actionEditSignal;
   QAction *actionDeleteSignal;
-  QAction *actionNewRepository;
-  QAction *actionEditRepository;
-  QAction *actionDeleteRepository;
-  QAction *actionPp;
+  QAction *actionOpenRepositories;
 //  QAction *action;
   
   
@@ -90,9 +87,8 @@ private slots:
   void newSignal();
   void editSignal();
   void deleteSignal();
-  void newRepository();
-  void editRepository();
-  void deleteRepository();  
+
+  void openRepositories();
   
   
 public slots:

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SvNetworkEditorDialog</class>
- <widget class="QDialog" name="SvNetworkEditorDialog">
+ <class>SvRepositoryEditorDialog</class>
+ <widget class="QDialog" name="SvRepositoryEditorDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>315</width>
-    <height>194</height>
+    <width>387</width>
+    <height>291</height>
    </rect>
   </property>
   <property name="maximumSize">
    <size>
     <width>16777215</width>
-    <height>194</height>
+    <height>1555555</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -21,27 +21,72 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <widget class="QLabel" name="lblCaption">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: rgb(0, 0, 127);</string>
-     </property>
-     <property name="text">
-      <string>Настройки для: </string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string/>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_15">
+        <item>
+         <widget class="QLabel" name="lblDevName_17">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Имя репозитория</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="editName">
+          <property name="inputMask">
+           <string/>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="maxLength">
+           <number>32767</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame_3">
+        <property name="frameShape">
+         <enum>QFrame::HLine</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+       </widget>
+      </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
@@ -54,13 +99,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>80</width>
+            <width>100</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>100</width>
             <height>16777215</height>
            </size>
           </property>
@@ -108,13 +153,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>80</width>
+            <width>100</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>100</width>
             <height>16777215</height>
            </size>
           </property>
@@ -159,13 +204,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>80</width>
+            <width>100</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>100</width>
             <height>16777215</height>
            </size>
           </property>
@@ -194,6 +239,9 @@
           <property name="maxLength">
            <number>32767</number>
           </property>
+          <property name="placeholderText">
+           <string>postgres</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -210,13 +258,13 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>80</width>
+            <width>100</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>80</width>
+            <width>100</width>
             <height>16777215</height>
            </size>
           </property>
@@ -245,6 +293,127 @@
           <property name="maxLength">
            <number>32767</number>
           </property>
+          <property name="placeholderText">
+           <string>postgres</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QFrame" name="frame">
+        <property name="frameShape">
+         <enum>QFrame::HLine</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_13">
+        <item>
+         <widget class="QLabel" name="lblDevName_15">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>База данных</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="editDBName">
+          <property name="inputMask">
+           <string/>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="maxLength">
+           <number>32767</number>
+          </property>
+          <property name="placeholderText">
+           <string>can_db</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_14">
+        <item>
+         <widget class="QLabel" name="lblDevName_16">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Таблица</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="editTableName">
+          <property name="inputMask">
+           <string/>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="maxLength">
+           <number>32767</number>
+          </property>
+          <property name="placeholderText">
+           <string>can_db_option</string>
+          </property>
          </widget>
         </item>
        </layout>
@@ -253,7 +422,29 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="layoutButtons">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="bnTest">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>80</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Тест</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
      <item>
       <spacer name="hSpacerButtons">
        <property name="orientation">

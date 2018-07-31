@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml sql serialport
+QT       += core gui xml sql serialport network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -38,7 +38,8 @@ SOURCES += \
     sv_device_editor.cpp \
     ../../svlib/sv_log.cpp \
     sv_kts_editor.cpp \
-    sv_networkeditor.cpp
+    sv_repository_editor.cpp \
+    sv_repositories.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -55,13 +56,15 @@ HEADERS += \
     sv_device_editor.h \
     ../../svlib/sv_log.h \
     sv_kts_editor.h \
-    sv_networkeditor.h
+    sv_repository_editor.h \
+    sv_repositories.h
 
 FORMS += \
         mainwindow.ui \
     sv_device_editor.ui \
     sv_kts_editor.ui \
-    sv_networkeditor.ui
+    sv_repository_editor.ui \
+    sv_repositories.ui
 
 RESOURCES += \
     res.qrc

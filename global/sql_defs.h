@@ -3,7 +3,9 @@
 
 #define CR "\n"
 
-#define TREE_HEADERS "|Датчик/Сигнал;|Размер данных (бит);|Смещение (бит);<Параметры;<Примечания" // <Тип интерфейса;<Протокол;<Интерфес;<Тип данных;"
+#define DEVICES_TREE_HEADERS "|Датчик/Сигнал;|Размер данных (бит);|Смещение (бит);<Параметры;<Примечания" // <Тип интерфейса;<Протокол;<Интерфес;<Тип данных;"
+
+#define REPOSITORIES_TREE_HEADERS "|Репозиторий;|Сервер;|Порт;|Логин;|База данных;|Таблица"
 
 #define SQL_SELECT_FROM_DEVICES \
   "with s as ( " CR \
@@ -64,17 +66,88 @@
 
 
 #define SQL_SELECT_FROM_SIGNALS \
+  "with " CR \
+  " minor1 AS ( " CR \
+  "    SELECT id, repository_name, host, port, " CR \
+  "            login, pass, dbname,table_name " CR \
+  "    FROM repositories), " CR \
+  " minor2 AS ( " CR \
+  "    SELECT id, repository_name, host, port, " CR \
+  "            login, pass, dbname,table_name " CR \
+  "    FROM repositories), " CR \
+  " minor3 AS ( " CR \
+  "    SELECT id, repository_name, host, port, " CR \
+  "            login, pass, dbname,table_name " CR \
+  "    FROM repositories) " CR \
   "SELECT signals.id as signal_id, " CR \
-  "signals.designation as signal_name, " CR \
-  "signals.data_offset as signal_data_offset, " CR \
-  "signals.data_length as signal_data_length, " CR \
-  "signals.description as signal_description " CR \
+  "   signals.device_id as signal_device_id, " CR \
+  "   devices.device_name as signal_device_name, " CR \
+  "   signals.signal_name as signal_name, " CR \
+  "   signals.data_offset as signal_data_offset, " CR \
+  "   signals.data_length as signal_data_length, " CR \
+  "   signals.description as signal_description, " CR \
+  "   repositories.id as              major_repository_id, " CR \
+  "   repositories.repository_name as major_repository_name, " CR \
+  "   repositories.host as            major_repository_host, " CR \
+  "   repositories.port as            major_repository_port, " CR \
+  "   repositories.login as           major_repository_login, " CR \
+  "   repositories.pass as            major_repository_pass, " CR \
+  "   repositories.dbname as          major_repository_dbname, " CR \
+  "   repositories.table_name as      major_repository_table_name, " CR \
+  "   minor1.id as              minor_repository1_id, " CR \
+  "   minor1.repository_name as minor_repository1_name, " CR \
+  "   minor1.host as            minor_repository1_host, " CR \
+  "   minor1.port as            minor_repository1_port, " CR \
+  "   minor1.login as           minor_repository1_login, " CR \
+  "   minor1.pass as            minor_repository1_pass, " CR \
+  "   minor1.dbname as          minor_repository1_dbname, " CR \
+  "   minor1.table_name as      minor_repository1_table_name, " CR \
+  "   minor2.id as              minor_repository2_id, " CR \
+  "   minor2.repository_name as minor_repository2_name, " CR \
+  "   minor2.host as            minor_repository2_host, " CR \
+  "   minor2.port as            minor_repository2_port, " CR \
+  "   minor2.login as           minor_repository2_login, " CR \
+  "   minor2.pass as            minor_repository2_pass, " CR \
+  "   minor2.dbname as          minor_repository2_dbname, " CR \
+  "   minor2.table_name as      minor_repository2_table_name, " CR \
+  "   minor3.id as              minor_repository3_id, " CR \
+  "   minor3.repository_name as minor_repository3_name, " CR \
+  "   minor3.host as            minor_repository3_host, " CR \
+  "   minor3.port as            minor_repository3_port, " CR \
+  "   minor3.login as           minor_repository3_login, " CR \
+  "   minor3.pass as            minor_repository3_pass, " CR \
+  "   minor3.dbname as          minor_repository3_dbname, " CR \
+  "   minor3.table_name as      minor_repository3_table_name " CR \
   "FROM signals " CR \
-  "WHERE device_id = %1 "
+  "LEFT JOIN devices ON devices.id = signals.device_id " CR \
+  "LEFT JOIN repositories ON repositories.id = signals.major_repository_id " CR \
+  "LEFT JOIN minor1 ON minor1.id = signals.minor_repository1_id " CR \
+  "LEFT JOIN minor2 ON minor2.id = signals.minor_repository2_id " CR \
+  "LEFT JOIN minor3 ON minor3.id = signals.minor_repository3_id "
+
+#define SQL_SELECT_DEVICE_SIGNALS (SQL_SELECT_FROM_SIGNALS " WHERE device_id = %1")
+#define SQL_SELECT_SIGNALS_LIST (SQL_SELECT_FROM_SIGNALS " ORDER BY signals.data_offset ASC")
+#define SQL_SELECT_ONE_SIGNAL (SQL_SELECT_FROM_SIGNALS " WHERE signals.id = %1")
+
+
+#define SQL_SELECT_FROM_REPOSITORIES \
+  "SELECT repositories.id as repository_id, " CR \
+  "   repositories.repository_name as repository_name, " CR \
+  "   repositories.host as repository_host, " CR \
+  "   repositories.port as repository_port, " CR \
+  "   repositories.login as repository_login, " CR \
+  "   repositories.pass as repository_pass, " CR \
+  "   repositories.dbname as repository_dbname, " CR \
+  "   repositories.table_name as repository_table_name " CR \
+  "FROM repositories"
+
+#define SQL_SELECT_REPOSITORIES_LIST (SQL_SELECT_FROM_REPOSITORIES " ORDER BY signals.repositories.host ASC")
+#define SQL_SELECT_ONE_REPOSITORY (SQL_SELECT_FROM_REPOSITORIES " WHERE repositories.id in (%1)")
+
 
 #define SQL_NEW_KTS \
-  "INSERT INTO ktss (kts_name, ifc_id, " CR \
-  "protocol_id, data_type, data_length, driver_lib_path, description)" CR \
+  "INSERT INTO ktss (kts_name, ifc_id, protocol_id, data_type, " CR \
+  "data_length, driver_lib_path, description)" CR \
   "VALUES ('%1', %2, %3, %4, %5, '%6', '%7');"
 
 #define SQL_UPDATE_KTS \
@@ -90,6 +163,19 @@
 #define SQL_UPDATE_DEVICE \
   "UPDATE devices SET device_name='%1', kts_id=%2, port_name='%3', description='%4' " CR \
   "WHERE id = %5;"
+
+
+#define SQL_NEW_REPOSITORY \
+  "INSERT INTO repositories ( " CR \
+  "     repository_name, host, port, login, pass, dbname, table_name) " CR \
+  "VALUES ('%1', '%2', %3, '%4', '%5', '%6', '%7');"
+
+#define SQL_UPDATE_REPOSITORY \
+  "UPDATE repositories SET " CR \
+  "   repository_name='%1', host='%2', port=%3, login='%4', pass='%5', " \
+  "   dbname='%6', table_name='%7' " CR \
+  "WHERE id = %8"
+
 
 #define SQL_SELECT_IFCES "SELECT id, ifc_name FROM ifces ORDER BY ifc_name"
 

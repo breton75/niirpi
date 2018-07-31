@@ -42,7 +42,7 @@ SvDeviceEditor::SvDeviceEditor(QWidget *parent, int deviceId) :
     _device_kts_id = q->value("device_kts_id").toInt();
     _device_ifc_name = q->value("device_ifc_name").toString();
     _device_protocol_name = q->value("device_protocol_name").toString();
-    _device_port_name = q->value("device_port_name").toString();
+    _device_connection_params = q->value("connection_params").toString();
     _device_data_type_name = q->value("device_data_type_name").toString();
     _device_data_length = q->value("device_data_length").toString(); 
     _device_driver_path = q->value("device_driver_lib_path").toString();
@@ -63,7 +63,7 @@ SvDeviceEditor::SvDeviceEditor(QWidget *parent, int deviceId) :
   else  ui->editID->setText(QString::number(_id));
   
   ui->editDeviceName->setText(_device_name);
-  ui->cbDevicePortName->setCurrentIndex(ui->cbDevicePortName->findText(_device_port_name));
+//  ui->cbDevicePortName->setCurrentIndex(ui->cbDevicePortName->findText(_device_port_name));
   ui->editDeviceIfc->setText(_device_ifc_name);
   ui->editDeviceProtocol->setText(_device_protocol_name);
   ui->editDeviceDataType->setText(_device_data_type_name);
@@ -142,7 +142,7 @@ void SvDeviceEditor::accept()
   
     _device_name = ui->editDeviceName->text();
     _device_kts_id = ui->cbDeviceType->currentData().toInt();
-    _device_port_name = ui->cbDevicePortName->currentText();
+//    _device_connection_params = ui->cbDevicePortName->currentText();
     _device_description = ui->textDeviceDescription->toPlainText();
   
     switch (this->showMode) {
@@ -152,7 +152,7 @@ void SvDeviceEditor::accept()
         QSqlError serr = SQLITE->execSQL(QString(SQL_NEW_DEVICE)
                                          .arg(_device_name)
                                          .arg(_device_kts_id)
-                                         .arg(_device_port_name)
+                                         .arg(_device_connection_params)
                                          .arg(_device_description));
         
         if(QSqlError::NoError != serr.type()) _exception.raise(serr.text());
@@ -165,7 +165,7 @@ void SvDeviceEditor::accept()
         QSqlError serr = SQLITE->execSQL(QString(SQL_UPDATE_DEVICE)
                                          .arg(_device_name)
                                          .arg(_device_kts_id)
-                                         .arg(_device_port_name)
+                                         .arg(_device_connection_params)
                                          .arg(_device_description)
                                          .arg(_id));
         

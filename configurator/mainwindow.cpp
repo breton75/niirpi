@@ -3,15 +3,13 @@
 
 extern SvSQLITE* SQLITE;
 extern SvDeviceEditor *DEVICE_UI;
+extern SvRepositories* REPOSITORIES_UI;
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
   ui(new Ui::MainWindow)
 {
   ui->setupUi(this);
-  
-  actionPp = new QAction(this);
-  actionPp->setText("Pp");
   
   setWindowTitle(QString("Конфигуратор стойки v.%1").arg(APP_VERSION));
   
@@ -42,16 +40,14 @@ MainWindow::MainWindow(QWidget *parent) :
   configMenu->addAction(actionEditSignal);
   configMenu->addAction(actionDeleteSignal);
   configMenu->addSeparator();
-  configMenu->addAction(actionNewRepository);
-  configMenu->addAction(actionEditRepository);
-  configMenu->addAction(actionDeleteRepository);
+  configMenu->addAction(actionOpenRepositories);
   configMenu->addSeparator();
   
   ui->mainToolBar->addActions(QList<QAction*>() << actionNewDevice << actionEditDevice << actionDeleteDevice);
   ui->mainToolBar->addSeparator();
   ui->mainToolBar->addActions(QList<QAction*>() << actionNewSignal << actionEditSignal << actionDeleteSignal);
   ui->mainToolBar->addSeparator();
-  ui->mainToolBar->addActions(QList<QAction*>() << actionNewRepository << actionEditRepository << actionDeleteRepository);
+  ui->mainToolBar->addActions(QList<QAction*>() << actionOpenRepositories);
   
 //  helpMenu = menuBar()->addMenu(tr("&Help"));
 //  helpMenu->addAction(aboutAct);
@@ -86,7 +82,7 @@ bool MainWindow::init()
     
     if(serr.type() != QSqlError::NoError) _exception.raise(serr.databaseText());
 
-    _model = new TreeModel(QString(TREE_HEADERS).split(';'), ui->treeView);
+    _model = new TreeModel(QString(DEVICES_TREE_HEADERS).split(';'), ui->treeView);
     ui->treeView->setModel(_model);
     
     bool b = readConfig();
@@ -100,8 +96,6 @@ bool MainWindow::init()
     log << svlog::Critical << e.error << svlog::endl;
     return false;
   }
-  
-  
 }
 
 bool MainWindow::readConfig()
@@ -121,8 +115,8 @@ bool MainWindow::readConfig()
     
     for(int i = 0; i < column_count; i++)
       root->setInfo(i, ItemInfo());
-    
-    
+
+        
     QSqlError serr = SQLITE->execSQL(SQL_SELECT_DEVICES_LIST, q);
     
     if(serr.type() != QSqlError::NoError) _exception.raise(serr.text());
@@ -150,10 +144,10 @@ bool MainWindow::readConfig()
       root->child(child_count)->setData(2, QVariant());
       root->child(child_count)->setInfo(2, ItemInfo(itUndefined, ""));
       
-      root->child(child_count)->setData(3, QString("\nИнтерфейс:\t%1\nПротокол:\t%2\nПорт:\t%3\nТип данных:\t%4")
+      root->child(child_count)->setData(3, QString("\nИнтерфейс:\t%1\nПротокол:\t%2\nПараметры:\t%3\nТип данных:\t%4")
                                           .arg(q->value("device_ifc_name").toString())
                                           .arg(q->value("device_protocol_name").toString())
-                                          .arg(q->value("device_port_name").toString())
+                                          .arg(q->value("device_connection_params").toString())
                                           .arg(q->value("device_data_type_name").toString()));
       root->child(child_count)->setInfo(3, ItemInfo(itDeviceParams, ""));
       
@@ -186,33 +180,33 @@ bool MainWindow::readConfig()
     
     
     /** заполняем список сигналов **/
-    TreeItem *sensor;
+    TreeItem *device;
     
     for(int i = 0; i < root->childCount(); i++) {
       
-      sensor = root->child(i);
+      device = root->child(i);
       
-      serr = SQLITE->execSQL(QString(SQL_SELECT_FROM_SIGNALS).arg(sensor->id), q);
+      serr = SQLITE->execSQL(QString(SQL_SELECT_DEVICE_SIGNALS).arg(device->id), q);
       
       if(serr.type() != QSqlError::NoError) _exception.raise(serr.text());
       
       // заполняем модель выбранными данными
       while(q->next()) {
         
-        child_count = sensor->childCount();
+        child_count = device->childCount();
         
-        sensor->insertChildren(child_count, 1, column_count);
+        device->insertChildren(child_count, 1, column_count);
         
-        sensor->child(child_count)->id = q->value("signal_id").toInt();
-        sensor->child(child_count)->parent_id = sensor->id;
-        sensor->child(child_count)->is_main_row = false; //q->value("task_type").toInt() == 1; //  q->value("parent_task_id").toInt() == -1;
+        device->child(child_count)->id = q->value("signal_id").toInt();
+        device->child(child_count)->parent_id = device->id;
+        device->child(child_count)->is_main_row = false; //q->value("task_type").toInt() == 1; //  q->value("parent_task_id").toInt() == -1;
   //        root->child(child_count)->item_state = q->value("last_state").toInt();
-        sensor->child(child_count)->item_type = itSignal;
+        device->child(child_count)->item_type = itSignal;
   
-        sensor->child(child_count)->setData(0, q->value("signal_name"));
-        sensor->child(child_count)->setData(1, q->value("signal_data_length"));
-        sensor->child(child_count)->setData(2, q->value("signal_data_offset"));
-        sensor->child(child_count)->setData(4, q->value("signal_description"));
+        device->child(child_count)->setData(0, q->value("signal_name"));
+        device->child(child_count)->setData(1, q->value("signal_data_length"));
+        device->child(child_count)->setData(2, q->value("signal_data_offset"));
+        device->child(child_count)->setData(4, q->value("signal_description"));
         
         for (int column = 0; column < column_count; column++) {
           
@@ -229,7 +223,7 @@ bool MainWindow::readConfig()
           
           inf.fieldName = field_name;
           
-          sensor->child(child_count)->setInfo(column, inf);
+          device->child(child_count)->setInfo(column, inf);
         
         }
       }
@@ -330,26 +324,12 @@ void MainWindow::createActions()
   connect(actionDeleteDevice, &QAction::triggered, this, &MainWindow::deleteDevice);
   
   /// репозитоии
-  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/add.ico"), QSize(), QIcon::Normal, QIcon::Off);
-  actionNewRepository = new QAction(this);
-  actionNewRepository->setObjectName(QStringLiteral("actionNewRepository"));
-  actionNewRepository->setIcon(icon);
-  actionNewRepository->setText("Новый репозиторий");
-  connect(actionNewRepository, &QAction::triggered, this, &MainWindow::newRepository);
-  
-  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/issue.ico"), QSize(), QIcon::Normal, QIcon::Off);
-  actionEditRepository = new QAction(this);
-  actionEditRepository->setObjectName(QStringLiteral("actionEditRepository"));
-  actionEditRepository->setIcon(icon);
-  actionEditRepository->setText("Редактировать");
-  connect(actionEditRepository, &QAction::triggered, this, &MainWindow::editRepository);
-  
-  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/cross.ico"), QSize(), QIcon::Normal, QIcon::Off);
-  actionDeleteRepository = new QAction(this);
-  actionDeleteRepository->setObjectName(QStringLiteral("actionDeleteRepository"));
-  actionDeleteRepository->setIcon(icon);
-  actionDeleteRepository->setText("Удалить репозиторий");
-  connect(actionDeleteRepository, &QAction::triggered, this, &MainWindow::deleteRepository);
+  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/database.ico"), QSize(), QIcon::Normal, QIcon::Off);
+  actionOpenRepositories = new QAction(this);
+  actionOpenRepositories->setObjectName(QStringLiteral("actionOpenRepositories"));
+  actionOpenRepositories->setIcon(icon);
+  actionOpenRepositories->setText("Репозитории");
+  connect(actionOpenRepositories, &QAction::triggered, this, &MainWindow::openRepositories);
   
   /// служебные
   openAct = new QAction(tr("&Open..."), this);
@@ -441,18 +421,12 @@ void MainWindow::deleteSignal()
 
 }
 
-void MainWindow::newRepository()
+void MainWindow::openRepositories()
 {
-
+  REPOSITORIES_UI = new SvRepositories(log, this);
+  
+  int result = REPOSITORIES_UI->exec();
+  
+  delete REPOSITORIES_UI;
+  
 }
-
-void MainWindow::editRepository()
-{
-
-}
-
-void MainWindow::deleteRepository()
-{
-
-}
-

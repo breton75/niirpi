@@ -66,6 +66,15 @@ enum ItemTypes
   itSignalOffset,
   itSignalType,
   itSignalDescription,
+  itRepository,
+  itRepositoryId,
+  itRepositoryName,
+  itRepositoryHost,
+  itRepositoryPort,
+  itRepositoryLogin,
+  itRepositoryPass,
+  itRepositoryDBName,
+  itRepositoryTableName,
   itUndefined
 };
 

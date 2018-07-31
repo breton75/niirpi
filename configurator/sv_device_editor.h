@@ -62,7 +62,7 @@ class SvDeviceEditor : public QDialog
     
     int     _id = -1;
     QString _device_name = "";
-    QString _device_port_name = "";
+    QString _device_connection_params = "";
     int _device_kts_id = -1;
     QString _device_type = "";
     QString _device_ifc_name = "";

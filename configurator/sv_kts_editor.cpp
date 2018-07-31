@@ -155,7 +155,7 @@ void SvKTSEditor::accept()
     _kts_driver_path = ui->editDriver->text();
     _kts_description = ui->textDescription->toPlainText();
   
-    switch (this->showMode) {
+    switch (showMode) {
       
       case smNew: {
         
