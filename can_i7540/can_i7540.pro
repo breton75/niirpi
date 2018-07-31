@@ -1,20 +1,15 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2018-07-17T11:15:35
+# Project created by QtCreator 2018-06-09T10:30:22
 #
 #-------------------------------------------------
 
-QT       += core gui xml sql serialport
+QT       += core gui serialport network serialbus
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = configurator
+TARGET = can_i7540
 TEMPLATE = app
-
-VERSION = 0.1.0    # major.minor.patch
-DEFINES += APP_VERSION=\\\"$$VERSION\\\"
-
-DEFINES += APP_DEBUG=1
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
@@ -31,37 +26,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    ../../svlib/sv_settings.cpp \
-    ../../svlib/sv_sqlite.cpp \
-    treeitem.cpp \
-    treemodel.cpp \
-    sv_device_editor.cpp \
-    ../../svlib/sv_log.cpp \
-    sv_kts_editor.cpp \
-    sv_networkeditor.cpp
+    sv_ican.cpp \
+    ../can_server/can_server/can_queue.cpp \
+    sv_i7540.cpp
 
 HEADERS += \
         mainwindow.h \
+    sv_ican.h \
+    ../can_server/can_server/can_queue.h \
     ../../svlib/sv_exception.h \
-    xbelreader.h \
-    xbelwriter.h \
-    ../../svlib/sv_settings.h \
-    ../../svlib/sv_sqlite.h \
-    ../global/sql_defs.h \
-    treeitem.h \
-    treemodel.h \
-    sv_oht.h \
-    sv_idevice.h \
-    sv_device_editor.h \
-    ../../svlib/sv_log.h \
-    sv_kts_editor.h \
-    sv_networkeditor.h
+    sv_i7540.h
 
 FORMS += \
-        mainwindow.ui \
-    sv_device_editor.ui \
-    sv_kts_editor.ui \
-    sv_networkeditor.ui
-
-RESOURCES += \
-    res.qrc
+        mainwindow.ui

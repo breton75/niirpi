@@ -7,7 +7,7 @@
 #include <QDateTime>
 #include <QMetaType>
 #include <QtSerialPort/QSerialPort>
-
+#include <QDebug>
 namespace idev {
 
   enum DeviceTypes {
@@ -30,6 +30,23 @@ namespace idev {
     int data_length = 0;
     QString driver_lib_path = "";
     QString description = "";
+    
+    DeviceConfig &operator= (DeviceConfig &other) {  
+      
+      id = other.id;
+      name = other.name;
+      kts_id = other.kts_id;
+      kts_name = other.kts_name;
+      ifc_id = other.ifc_id;
+      ifc_name = other.ifc_name;
+      protocol_id = other.protocol_id;
+      protocol_name = other.protocol_name;
+      data_type = other.data_type;
+      data_type_name = other.data_type_name;
+      data_length = other.data_length;
+      driver_lib_path = other.driver_lib_path;
+      description = other.description;
+    }
     
   };
   
@@ -65,10 +82,16 @@ public:
   
   bool isReadyRead() { return _is_ready_read; }
   
+  virtual idev::DeviceConfig* config() { return &_config; }
+  virtual bool setConfig(idev::DeviceConfig& config) { _config = config; return true; }
+  
+  virtual bool setParams(const QString& params) = 0;
+  
   virtual bool write(const QByteArray* data) = 0;
   virtual QByteArray read() = 0;
   
-  
+private:
+  idev::DeviceConfig _config;
 
 protected:
   quint32 _id;

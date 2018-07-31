@@ -26,17 +26,17 @@
 #define P_DEVICE_PROTOCOL "protocol"
 
 
-idev::SvIDevice* /*OHTSHARED_EXPORT*/ create_device(const QString& params_string);
+//idev::SvIDevice* /*OHTSHARED_EXPORT*/ create_device(const QString& params_string);
 
 class /*OHTSHARED_EXPORT*/ SvOHT: public idev::SvIDevice
 {
   
 public:
-  SvOHT(idev::DeviceConfig deviceConfig, SerialPortParams serialParams);
+  SvOHT();
   ~SvOHT();
   
   
-  idev::DeviceTypes type() const { return idev::sdtOHT; }
+  idev::DeviceTypes type() const { return idev::sdtOHT_Gamma12700; }
   
   bool readyRead() { return _ready_read; }
   
@@ -45,6 +45,8 @@ public:
   
   bool write(const QByteArray* data);
   QByteArray read();
+  
+  bool setParams(const QString& params);
   
   void setSerialPortParams(const SerialPortParams& params);
   

@@ -24,7 +24,7 @@
   "SELECT devices.id as device_id, " CR \
   "   devices.device_name as device_name, " CR \
   "   devices.kts_id as device_kts_id, " CR \
-  "   devices.port_name as device_port_name, " CR \
+  "   devices.connection_params as device_connection_params, " CR \
   "   devices.description as device_description, " CR \
   "   s.kts_name as device_kts_name, " CR \
   "   s.kts_ifc_id as device_ifc_id, " CR \
@@ -98,3 +98,6 @@
 
 
 #endif // DEFS_H
+
+
+

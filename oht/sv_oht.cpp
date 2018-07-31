@@ -3,11 +3,97 @@
 
 /** *****************   ************************* **/
 
-idev::SvIDevice* /*OHTSHARED_EXPORT*/ create_device(const QString& params_string)
-{  
+//idev::SvIDevice* /*OHTSHARED_EXPORT*/ create_device(const QString& params_string)
+//{  
+//  //! обязателен первый аргумент!! парсер считает, что там находится путь к программе
+//  QStringList params_list;
+//  params_list << "dumb_path_to_app" << params_string.split(" ");
+  
+//  QCommandLineParser parser;
+//  parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
+  
+//  parser.addOption(QCommandLineOption(P_SERIAL_BAUDRATE, "BAUDRATE", "19200", "19200"));
+//  parser.addOption(QCommandLineOption(P_SERIAL_PORTNAME, "PORTNAME", "0", "0"));
+//  parser.addOption(QCommandLineOption(P_SERIAL_DATABITS, "DATABITS", "8", "8"));
+//  parser.addOption(QCommandLineOption(P_SERIAL_PARITY,   "PARITY",   "0", "0"));
+//  parser.addOption(QCommandLineOption(P_SERIAL_STOPBITS, "STOPBITS", "2", "2"));
+//  parser.addOption(QCommandLineOption(P_SERIAL_FLOWCTRL, "FLOWCTRL", "0", "0"));
+//  parser.addOption(QCommandLineOption(P_DEVICE_PROTOCOL, "PROTOCOL", "1", "1"));
+  
+  
+//  SerialPortParams serial_params;
+//  idev::DeviceConfig device_config;
+  
+//  SvException exception;
+//  quint32 d;
+//  bool ok;
+  
+//  try {
+    
+//    if(!parser.parse(params_list)) exception.raise(QString("Wrong params"));      
+
+//    serial_params.baudrate = parser.value(P_SERIAL_BAUDRATE).toUInt(&ok);
+//    if(!ok) exception.raise(QString("Wrong params: %1").arg(P_SERIAL_BAUDRATE));
+    
+//    d = parser.value(P_SERIAL_DATABITS).toUInt(&ok);
+//    if(!(ok & DataBits.contains(QSerialPort::DataBits(d)))) exception.raise(QString("Wrong params: %1").arg(P_SERIAL_DATABITS));
+//    serial_params.databits = QSerialPort::DataBits(d);
+        
+//    d = parser.value(P_SERIAL_FLOWCTRL).toUInt(&ok);
+//    if(!(ok & FlowControls.contains(QSerialPort::FlowControl(d)))) exception.raise(QString("Wrong params: %1").arg(P_SERIAL_FLOWCTRL));
+//    serial_params.flowcontrol = QSerialPort::FlowControl(d);
+    
+//    serial_params.portname =    parser.value(P_SERIAL_PORTNAME).toUpper();
+    
+//    d = parser.value(P_SERIAL_PARITY).toUInt(&ok);
+//    if(!ok) exception.raise(QString("Wrong params: %1").arg(P_SERIAL_PARITY));
+//    serial_params.parity = QSerialPort::Parity(d);
+        
+//    d = parser.value(P_SERIAL_STOPBITS).toUInt(&ok);
+//    if(!ok) exception.raise(QString("Wrong params: %1").arg(P_SERIAL_STOPBITS));
+//    serial_params.stopbits = QSerialPort::StopBits(d);
+    
+////    serial_params. = parser.value(P_SERIAL_);
+////    serial_params. = parser.value(P_SERIAL_);
+////    serial_params. = parser.value(P_SERIAL_);
+    
+//    device_config.protocol_name = parser.value(P_DEVICE_PROTOCOL).toUtf8();
+      
+//  }
+  
+//  catch(SvException& e) {
+    
+//    return 0;
+//  }
+    
+  
+//  SvOHT* oht = new SvOHT(device_config, serial_params);
+  
+//  return oht;
+  
+//}
+
+
+/** *****************   ************************* **/
+
+SvOHT::SvOHT():
+  idev::SvIDevice()
+{
+
+}
+
+SvOHT::~SvOHT()
+{
+  _serial.close();
+  
+  deleteLater();
+}
+
+bool SvOHT::setParams(const QString& params)
+{
   //! обязателен первый аргумент!! парсер считает, что там находится путь к программе
   QStringList params_list;
-  params_list << "dumb_path_to_app" << params_string.split(" ");
+  params_list << "dumb_path_to_app" << params.split(" ");
   
   QCommandLineParser parser;
   parser.setSingleDashWordOptionMode(QCommandLineParser::ParseAsLongOptions);
@@ -20,74 +106,54 @@ idev::SvIDevice* /*OHTSHARED_EXPORT*/ create_device(const QString& params_string
   parser.addOption(QCommandLineOption(P_SERIAL_FLOWCTRL, "FLOWCTRL", "0", "0"));
   parser.addOption(QCommandLineOption(P_DEVICE_PROTOCOL, "PROTOCOL", "1", "1"));
   
-  
   SerialPortParams serial_params;
-  idev::DeviceConfig device_config;
-  
   SvException exception;
   quint32 d;
   bool ok;
   
   try {
     
-    if(!parser.parse(params_list)) exception.raise("wrong params");      
+    if(!parser.parse(params_list)) exception.raise(QString("Wrong params"));      
 
     serial_params.baudrate = parser.value(P_SERIAL_BAUDRATE).toUInt(&ok);
-    if(!ok) exception.raise("wrong params");
+    if(!ok) exception.raise(QString("Wrong params: %1").arg(P_SERIAL_BAUDRATE));
     
     d = parser.value(P_SERIAL_DATABITS).toUInt(&ok);
-    if(!(ok & DataBits.contains(QSerialPort::DataBits(d)))) exception.raise("wrong params");
+    if(!(ok & DataBits.contains(QSerialPort::DataBits(d)))) exception.raise(QString("Wrong params: %1").arg(P_SERIAL_DATABITS));
     serial_params.databits = QSerialPort::DataBits(d);
         
     d = parser.value(P_SERIAL_FLOWCTRL).toUInt(&ok);
-    if(!(ok & FlowControls.contains(QSerialPort::FlowControl(d)))) exception.raise("wrong params");
+    if(!(ok & FlowControls.contains(QSerialPort::FlowControl(d)))) exception.raise(QString("Wrong params: %1").arg(P_SERIAL_FLOWCTRL));
     serial_params.flowcontrol = QSerialPort::FlowControl(d);
     
-    serial_params.portname =    parser.value(P_SERIAL_PORTNAME).toUpper();
+    serial_params.portname = parser.value(P_SERIAL_PORTNAME).toUpper();
     
     d = parser.value(P_SERIAL_PARITY).toUInt(&ok);
-    if(!ok) exception.raise("wrong params");
+    if(!ok) exception.raise(QString("Wrong params: %1").arg(P_SERIAL_PARITY));
     serial_params.parity = QSerialPort::Parity(d);
         
     d = parser.value(P_SERIAL_STOPBITS).toUInt(&ok);
-    if(!ok) exception.raise("wrong params");
+    if(!ok) exception.raise(QString("Wrong params: %1").arg(P_SERIAL_STOPBITS));
     serial_params.stopbits = QSerialPort::StopBits(d);
     
-//    serial_params. = parser.value(P_SERIAL_);
-//    serial_params. = parser.value(P_SERIAL_);
-//    serial_params. = parser.value(P_SERIAL_);
     
-    device_config.protocol_name = parser.value(P_DEVICE_PROTOCOL).toUtf8();
+    _serial.setPortName(serial_params.portname);
+    _serial.setBaudRate(serial_params.baudrate);
+    _serial.setDataBits(serial_params.databits);
+    _serial.setFlowControl(serial_params.flowcontrol);
+    _serial.setParity(serial_params.parity);
+    _serial.setStopBits(serial_params.stopbits);
+//    _serial.set(serial_params.);
+    
+    return true;
       
   }
   
   catch(SvException& e) {
-    
-    return 0;
+    setLastError(e.error);
+    return false;
   }
-    
-  
-  SvOHT* oht = new SvOHT(device_config, serial_params);
-  
-  return oht;
-  
 }
-
-
-/** *****************   ************************* **/
-
-SvOHT::SvOHT(idev::DeviceConfig deviceConfig, SerialPortParams serialParams)
-{
-  
-}
-
-SvOHT::~SvOHT()
-{
-  _serial.close();
-  
-  deleteLater();
-}
-
 
 bool SvOHT::open()
 {

@@ -1,15 +1,19 @@
-QT -= gui
-QT += serialport sql
+#-------------------------------------------------
+#
+# Project created by QtCreator 2018-07-24T16:33:00
+#
+#-------------------------------------------------
+QT       += serialport
 
-CONFIG += c++11 console
-CONFIG -= app_bundle
+QT       -= gui
 
-TARGET = stand_server
+TARGET = core
+TEMPLATE = lib
 
-DEFINES += APP_DEBUG=1
+DEFINES += CORE_LIBRARY
 
 # The following define makes your compiler emit warnings if you use
-# any feature of Qt which as been marked deprecated (the exact warnings
+# any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
@@ -19,15 +23,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-SOURCES += main.cpp \
-    ../../svlib/sv_sqlite.cpp \
-    ../oht/sv_oht.cpp \
-    ../../svlib/sv_clog.cpp
+SOURCES += \
+        core.cpp
 
 HEADERS += \
-    ../../svlib/sv_exception.h \
-    ../../svlib/sv_sqlite.h \
-    ../global/sv_idevice.h \
-    ../oht/sv_oht.h \
-    ../../svlib/sv_clog.h \
-    ../global/sql_defs.h
+        core.h \
+        core_global.h 
+
+unix {
+    target.path = /usr/lib
+    INSTALLS += target
+}
