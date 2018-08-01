@@ -23,6 +23,7 @@
 #include "treemodel.h"
 #include "sv_device_editor.h"
 #include "sv_repositories.h"
+#include "sv_signal_editor.h"
 
 namespace Ui {
 class MainWindow;

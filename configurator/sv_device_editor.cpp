@@ -1,4 +1,3 @@
-#include "ui_sv_device_editor.h"
 #include "sv_device_editor.h"
 
 SvDeviceEditor *DEVICE_UI;
@@ -83,7 +82,7 @@ SvDeviceEditor::SvDeviceEditor(QWidget *parent, int deviceId) :
 
 SvDeviceEditor::~SvDeviceEditor()
 {
-  this->close();
+  close();
   delete ui;
 }
 

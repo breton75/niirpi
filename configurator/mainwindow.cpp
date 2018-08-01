@@ -4,6 +4,7 @@
 extern SvSQLITE* SQLITE;
 extern SvDeviceEditor *DEVICE_UI;
 extern SvRepositories* REPOSITORIES_UI;
+extern SvSignalEditor* SIGNALEDITOR_UI;
 
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -20,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
   ui->treeView->header()->setSectionResizeMode(QHeaderView::Stretch);
   ui->treeView->setSelectionBehavior(QAbstractItemView::SelectRows);
   ui->treeView->setEditTriggers(0);
-  ui->treeView->setLineWidth(5);
+  ui->treeView->setAlternatingRowColors(true);
   
   createActions();
   
@@ -365,7 +366,9 @@ void MainWindow::createMenus()
 void MainWindow::newDevice()
 {
   DEVICE_UI = new SvDeviceEditor(this);
+  
   int result = DEVICE_UI->exec();
+  
   switch (result) {
     
     case SvDeviceEditor::Error:
@@ -378,6 +381,7 @@ void MainWindow::newDevice()
       break;
     
   }
+  
   delete DEVICE_UI;
   
 }
@@ -385,7 +389,9 @@ void MainWindow::newDevice()
 void MainWindow::editDevice()
 {
   DEVICE_UI = new SvDeviceEditor(this, _model->itemFormIndex(ui->treeView->currentIndex())->id);
+  
   int result = DEVICE_UI->exec();
+  
   switch (result) {
     
     case SvDeviceEditor::Error:
@@ -408,12 +414,76 @@ void MainWindow::deleteDevice()
 
 void MainWindow::newSignal()
 {
+  int device_id = -1;
+  
+  switch (_model->itemFormIndex(ui->treeView->currentIndex())->item_type) {
+    case itDevice:
+      device_id = _model->itemFormIndex(ui->treeView->currentIndex())->id;
+      break;
+      
+    case itSignal:
+      device_id = _model->itemFormIndex(ui->treeView->currentIndex())->parent_id;
+      break;
+      
+    default:
+      return;
+  }
+        
+  SIGNALEDITOR_UI = new SvSignalEditor(this, device_id);
+  
+  int result = SIGNALEDITOR_UI->exec();
+  
+  switch (result) {
+    
+    case SvSignalEditor::Error:
+      log << svlog::Critical << SIGNALEDITOR_UI->lastError() << svlog::endl;
+      break;
+      
+    case SvSignalEditor::Accepted:
+      _model->clear();
+      readConfig();
+      break;
+    
+  }
+  
+  delete SIGNALEDITOR_UI;
 
 }
 
 void MainWindow::editSignal()
 {
-
+  int device_id = -1;
+  int signal_id = -1;
+  
+  switch (_model->itemFormIndex(ui->treeView->currentIndex())->item_type) {
+      
+    case itSignal:
+      signal_id = _model->itemFormIndex(ui->treeView->currentIndex())->id;
+      device_id = _model->itemFormIndex(ui->treeView->currentIndex())->parent_id;
+      break;
+      
+    default:
+      return;
+  }
+  
+  SIGNALEDITOR_UI = new SvSignalEditor(this, device_id, signal_id);
+  
+  int result = SIGNALEDITOR_UI->exec();
+  
+  switch (result) {
+    
+    case SvSignalEditor::Error:
+      log << svlog::Critical << SIGNALEDITOR_UI->lastError() << svlog::endl;
+      break;
+      
+    case SvSignalEditor::Accepted:
+      _model->clear();
+      readConfig();
+      break;
+    
+  }
+  
+  delete SIGNALEDITOR_UI;
 }
 
 void MainWindow::deleteSignal()

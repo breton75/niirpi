@@ -39,7 +39,8 @@ SOURCES += \
     ../../svlib/sv_log.cpp \
     sv_kts_editor.cpp \
     sv_repository_editor.cpp \
-    sv_repositories.cpp
+    sv_repositories.cpp \
+    sv_signal_editor.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -57,14 +58,16 @@ HEADERS += \
     ../../svlib/sv_log.h \
     sv_kts_editor.h \
     sv_repository_editor.h \
-    sv_repositories.h
+    sv_repositories.h \
+    sv_signal_editor.h
 
 FORMS += \
         mainwindow.ui \
     sv_device_editor.ui \
     sv_kts_editor.ui \
     sv_repository_editor.ui \
-    sv_repositories.ui
+    sv_repositories.ui \
+    sv_signal_editor.ui
 
 RESOURCES += \
     res.qrc

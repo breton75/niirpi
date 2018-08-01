@@ -13,10 +13,18 @@ SvRepositories::SvRepositories(svlog::SvLog& log, QWidget *parent) :
   
   _log = log;
   
+  ui->treeView->setAlternatingRowColors(true);
+  
   createActions();
   
   _toolBar = new QToolBar(this);
+  ui->verticalLayout->insertWidget(0, _toolBar);
   _toolBar->addActions(QList<QAction*>() << actionNewRepository << actionEditRepository << actionDeleteRepository);
+  _toolBar->addSeparator();
+  
+  if(!(init() && readRepositories()))
+    QDialog::reject();
+    
   
   setModal(true);
   show();
@@ -50,22 +58,22 @@ void SvRepositories::createActions()
 {
   QIcon icon;
   /** *********** actions ************** **/
-  /// репозитории
-  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/repository_new.ico"), QSize(), QIcon::Normal, QIcon::Off);
+  /// репозитории              
+  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/database_new.ico"), QSize(), QIcon::Normal, QIcon::Off);
   actionNewRepository = new QAction(this);
   actionNewRepository->setObjectName(QStringLiteral("actionNewRepository"));
   actionNewRepository->setIcon(icon);
   actionNewRepository->setText("Новый репозиторий");
   connect(actionNewRepository, &QAction::triggered, this, &SvRepositories::newRepository);
   
-  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/repository_edit.ico"), QSize(), QIcon::Normal, QIcon::Off);
+  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/database_edit.ico"), QSize(), QIcon::Normal, QIcon::Off);
   actionEditRepository = new QAction(this);
   actionEditRepository->setObjectName(QStringLiteral("actionEditRepository"));
   actionEditRepository->setIcon(icon);
   actionEditRepository->setText("Редактировать");
   connect(actionEditRepository, &QAction::triggered, this, &SvRepositories::editRepository);
     
-  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/repository_delete.ico"), QSize(), QIcon::Normal, QIcon::Off);
+  icon.addFile(QStringLiteral(":/munich/icons/munich-icons/ico/blue/database_delete.ico"), QSize(), QIcon::Normal, QIcon::Off);
   actionDeleteRepository = new QAction(this);
   actionDeleteRepository->setObjectName(QStringLiteral("actionDeleteRepository"));
   actionDeleteRepository->setIcon(icon);
@@ -152,7 +160,7 @@ bool SvRepositories::readRepositories()
 
       root->child(child_count)->id = q->value("repository_id").toInt();
       root->child(child_count)->parent_id = root->id;
-      root->child(child_count)->is_main_row = true; //q->value("task_type").toInt() == 1; //  q->value("parent_task_id").toInt() == -1;
+      root->child(child_count)->is_main_row = false;
 //        root->child(child_count)->item_state = q->value("last_state").toInt();
       root->child(child_count)->item_type = itRepository;
 

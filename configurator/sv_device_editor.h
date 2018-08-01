@@ -10,6 +10,8 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 
+#include "ui_sv_device_editor.h"
+
 //#include "sv_dev_model.h"
 //#include "sv_select_model_dialog.h"
 //#include "sv_select_brand_dialog.h"
@@ -18,7 +20,6 @@
 
 #include "../../svlib/sv_settings.h"
 #include "../../svlib/sv_sqlite.h"
-#include "../../svlib/sv_log.h"
 #include "../../svlib/sv_exception.h"
 #include "sv_kts_editor.h"
 
