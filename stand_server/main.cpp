@@ -5,6 +5,7 @@
 #include "../global/sv_idevice.h"
 #include "../global/sql_defs.h"
 #include "../global/dev_defs.h"
+#include "../global/sv_signal.h"
 
 #include "../oht/sv_oht.h"
 
@@ -12,16 +13,30 @@
 #include "../../svlib/sv_clog.h"
 #include "../../svlib/sv_exception.h"
 
-QList<idev::SvIDevice*> DEVICES;
+#include "sv_dbgate.h"
+
 extern SvSQLITE* SQLITE;
+
+QList<idev::SvIDevice*> DEVICES;
+QList<SvSignal*> SIGNALS;
+QList<SvDBGate*> DBGATES;
 
 clog::SvCLog lout;
 SvException exception;
 
 bool init();
-bool readConfig();
+
+bool readDevices();
+bool readSignals();
+bool readRepositories();
+
 idev::SvIDevice* create_device(const QSqlQuery* q);
 bool openDevices();
+
+SvDBGate* create_dbgate(const QSqlQuery* q);
+bool initDBs();
+
+SvSignal* create_signal(const QSqlQuery* q);
 
 QString config_path;
 
@@ -35,9 +50,11 @@ int main(int argc, char *argv[])
   /** открываем БД, читаем конфигурацию **/
   if(!init()) return -1;
   
-  if(!readConfig()) return -1;
+  if(!readDevices()) return -1;
   
   if(!openDevices()) return -1;
+  
+  if(!readSignals()) return -1;
   
   return a.exec();
 }
@@ -75,9 +92,9 @@ bool init()
   
 }
 
-bool readConfig()
+bool readDevices()
 {
-  lout << clog::Time << "Читаем конфигурацию" << clog::endl;
+  lout << clog::Time << "Читаем список устройств" << clog::endl;
   
   QSqlQuery* q = new QSqlQuery(SQLITE->db);
   
@@ -88,10 +105,20 @@ bool readConfig()
     if(serr.type() != QSqlError::NoError) exception.raise(serr.text());
     
     while(q->next()) { 
-//      if(!create_device(q)) exception.raise("Ошибка при загрузке конфигурации");
-      create_device(q);
+       
+      idev::SvIDevice* newdev = create_device(q);
+      
+      if(newdev)
+        DEVICES.append(newdev);
+      
+//      else
+//        exception.raise(QString("Не удалось добавить устройство %1 (id %2)")
+//                        .arg(q->value("device_name").toString())
+//                        .arg(q->value("device_id").toInt()));
     }
     q->finish();
+    
+    lout << QString("\tOK") << clog::endl;
     
     return true;
     
@@ -106,6 +133,55 @@ bool readConfig()
   }
 
 }
+
+bool readSignals()
+{
+  lout << clog::Time << "Читаем список сигналов" << clog::endl;
+  
+  QSqlQuery* q = new QSqlQuery(SQLITE->db);
+  
+  try {
+    
+    QSqlError serr = SQLITE->execSQL(SQL_SELECT_SIGNALS_LIST, q);
+    
+    if(serr.type() != QSqlError::NoError) exception.raise(serr.text());
+    
+    while(q->next()) { 
+       
+      SvSignal* newsig = create_signal(q);
+      
+      if(newsig)
+        SIGNALS.append(newsig);
+      
+      else
+        exception.raise(QString("Не удалось добавить сигнал %1 (id %2)")
+                        .arg(q->value("signal_name").toString())
+                        .arg(q->value("signal_id").toInt()));
+        
+    }
+    q->finish();
+    
+    lout << QString("\tOK") << clog::endl;
+    
+    return true;
+    
+  }
+  
+  catch(SvException& e) {
+    
+    delete q;
+    lout << QString("\tОшибка: %1").arg(e.error) << clog::endl;
+    return false;
+    
+  }
+  
+}
+
+bool readRepositories()
+{
+  
+}
+
 
 idev::SvIDevice* create_device(const QSqlQuery* q)
 {  
@@ -146,11 +222,6 @@ idev::SvIDevice* create_device(const QSqlQuery* q)
     if(!newdev->setConfig(config)) exception.raise(newdev->lastError());
     if(!newdev->setParams(params)) exception.raise(newdev->lastError());
     
-    DEVICES.append(newdev);
-    
-    lout << QString("\t%1 (%2): OK").arg(newdev->config()->name).arg(newdev->config()->kts_name)
-         << clog::endl;
-    
     return newdev;
     
   }
@@ -171,6 +242,7 @@ idev::SvIDevice* create_device(const QSqlQuery* q)
 bool openDevices()
 {
   lout << clog::Time << "Открываем устройства" << clog::endl;
+  
   for(idev::SvIDevice* device: DEVICES) {
     
     if(!device->open()) {
@@ -180,12 +252,66 @@ bool openDevices()
                                 .arg(device->lastError())
            << clog::endl;
       
+      return false;
+      
     }
     else {
       
       lout << QString("\t%1 (%2): OK").arg(device->config()->name).arg(device->config()->kts_name)
            << clog::endl;
       
+      return true;
+      
     }
+  }
+}
+
+SvDBGate* create_dbgate(const QSqlQuery* q)
+{
+  
+}
+
+bool initDBs();
+
+SvSignal* create_signal(const QSqlQuery* q)
+{
+  SvSignal* newsig = nullptr;
+  
+  SignalParams params;
+  params.id = q->value("signal_id").toInt();
+  params.cob_id = q->value("signal_cob_id").toInt();
+  params.name = q->value("signal_name").toString();
+  params.device_id = q->value("signal_device_id").toInt();
+  params.device_name = q->value("signal_device_name").toString();
+  params.kts_name = q->value("signal_kts_name").toString();
+  params.timeout = q->value("signal_timeout").toInt();
+  params.timeout_value = q->value("signal_timeout_value").toInt();
+  params.data_offset = q->value("signal_data_offset").toInt();
+  params.data_length = q->value("signal_data_length").toInt();
+  params.data_type = SignalDataTypes(q->value("signal_data_type").toInt());
+  params.major_repository_id = q->value("major_repository_id").toInt();
+  params.minor_repository1_id = q->value("minor_repository1_id").toInt();
+  params.minor_repository2_id = q->value("minor_repository2_id").toInt();
+  params.minor_repository3_id = q->value("minor_repository3_id").toInt();
+  params.description = q->value("signal_description").toString();
+
+  try {
+    
+    newsig = new SvSignal(params);
+    
+    return newsig;
+    
+  }
+  
+  catch(SvException& e) {
+    
+    if(newsig)
+      delete newsig;
+    
+    lout << QString("\tОшибка: %1").arg(e.error)
+         << clog::endl;
+    
+    return 0;
+    
   }
 }

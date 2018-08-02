@@ -9,6 +9,7 @@
 #include "../../svlib/sv_sqlite.h"
 #include "../../svlib/sv_exception.h"
 #include "../global/sql_defs.h"
+#include "../global/sv_signal.h"
 
 #include "sv_device_editor.h"
 #include "sv_repository_editor.h"
@@ -41,25 +42,7 @@ private:
   
   SvException _exception;
   
-  int     _signal_id = -1;
-  QString _signal_name = "";
-  quint32 _signal_data_offset = 0;
-  quint32 _signal_data_length = 0;
-  QString _signal_description = "";
-  int _signal_major_repository_id = -1;
-  int _signal_minor_repository1_id = -1;
-  int _signal_minor_repository2_id = -1;
-  int _signal_minor_repository3_id = -1;
-  
-  QString _kts_name = "";
-  QString _device_name = "";
-  int _signal_device_id = -1;
-  
-  QString _device_ifc_name = "";
-  QString _device_protocol_name = "";
-  QString _device_data_type_name = "";
-  QString _device_data_length = "";
-  QString _device_driver_path = "";
+  SignalParams _signal_params;
   
   QString _last_error = "";
   

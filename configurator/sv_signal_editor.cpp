@@ -13,16 +13,17 @@ SvSignalEditor::SvSignalEditor(QWidget *parent, int deviceId, int id) :
 
   _showMode = id == -1 ? smNew : smEdit;
   
-  _signal_device_id = deviceId;
+  _signal_params.device_id = deviceId;
   
   loadRepositories();
+  loadDataTypes();
   
   QSqlQuery* q;
   QSqlError serr;
   
   /** читаем данные об устройстве **/
   q = new QSqlQuery(SQLITE->db);
-  serr = SQLITE->execSQL(QString(SQL_SELECT_ONE_DEVICE).arg(_signal_device_id), q);
+  serr = SQLITE->execSQL(QString(SQL_SELECT_ONE_DEVICE).arg(_signal_params.device_id), q);
   
   if(QSqlError::NoError != serr.type()) {  
 
@@ -36,8 +37,8 @@ SvSignalEditor::SvSignalEditor(QWidget *parent, int deviceId, int id) :
   
   q->first();
   
-  _device_name = q->value("device_name").toString();
-  _kts_name = q->value("device_kts_name").toString();
+  _signal_params.device_name = q->value("device_name").toString();
+  _signal_params.kts_name = q->value("device_kts_name").toString();
 //    _device_ifc_name = q->value("device_ifc_name").toString();
 //    _device_protocol_name = q->value("device_protocol_name").toString();
 //    _device_connection_params = q->value("connection_params").toString();
@@ -65,15 +66,17 @@ SvSignalEditor::SvSignalEditor(QWidget *parent, int deviceId, int id) :
     
     q->first();
     
-    _signal_id = q->value("signal_id").toInt();
-    _signal_name = q->value("signal_name").toString();
-    _signal_data_offset = q->value("signal_data_offset").toUInt();
-    _signal_data_length = q->value("signal_data_length").toUInt();
-    _signal_description = q->value("signal_description").toString(); 
-    _signal_major_repository_id = q->value("major_repository_id").toInt();
-    _signal_minor_repository1_id = q->value("minor_repository1_id").toInt();
-    _signal_minor_repository2_id = q->value("minor_repository2_id").toInt();
-    _signal_minor_repository3_id = q->value("minor_repository3_id").toInt();
+    _signal_params.id = q->value("signal_id").toInt();
+    _signal_params.name = q->value("signal_name").toString();
+    _signal_params.timeout = q->value("signal_timeout").toInt();
+    _signal_params.data_type = q->value("signal_data_type").toInt();
+    _signal_params.data_offset = q->value("signal_data_offset").toUInt();
+    _signal_params.data_length = q->value("signal_data_length").toUInt();
+    _signal_params.description = q->value("signal_description").toString(); 
+    _signal_params.major_repository_id = q->value("major_repository_id").toInt();
+    _signal_params.minor_repository1_id = q->value("minor_repository1_id").toInt();
+    _signal_params.minor_repository2_id = q->value("minor_repository2_id").toInt();
+    _signal_params.minor_repository3_id = q->value("minor_repository3_id").toInt();
     
     q->finish();
 
@@ -82,21 +85,22 @@ SvSignalEditor::SvSignalEditor(QWidget *parent, int deviceId, int id) :
   delete q;
   
   setCurrentRepositories();
-   
+  
+  ui->cbDataType->setCurrentIndex(ui->cbDataType->findData(_signal_params.data_type));
   
   if(_showMode == smNew) this->setWindowTitle("Новый сигнал");
-  else this->setWindowTitle(QString("Сигнал: %1").arg(_signal_name));
+  else this->setWindowTitle(QString("Сигнал: %1").arg(_signal_params.name));
   
   if(_showMode == smNew) ui->editID->setText("<Новый>");
-  else  ui->editID->setText(QString::number(_signal_id));
+  else  ui->editID->setText(QString::number(_signal_params.id));
   
-  ui->editName->setText(_signal_name);
+  ui->editName->setText(_signal_params.name);
 //  ui->cbDevicePortName->setCurrentIndex(ui->cbDevicePortName->findText(_device_port_name));
-  ui->editDevice->setText(_device_name);
-  ui->editKTS->setText(_kts_name);
-  ui->spinDataOffset->setValue(_signal_data_offset);
-  ui->spinDataLength->setValue(_signal_data_length);
-  ui->textDescription->setText(_signal_description);
+  ui->editDevice->setText(_signal_params.device_name);
+  ui->editKTS->setText(_signal_params.kts_name);
+  ui->spinDataOffset->setValue(_signal_params.data_offset);
+  ui->spinDataLength->setValue(_signal_params.data_length);
+  ui->textDescription->setText(_signal_params.description);
   
   connect(ui->bnSave, &QPushButton::clicked, this, &QDialog::accept);
   connect(ui->bnCancel, &QPushButton::clicked, this, &QDialog::reject);
@@ -152,12 +156,20 @@ bool SvSignalEditor::loadRepositories()
   
 }
 
+bool SvSignalEditor::loadDataTypes()
+{
+  ui->cbDataType->clear();
+  
+  ui->cbDataType->addItem("Integer", SignalDataTypes::dtInt);
+  ui->cbDataType->addItem("Float", SignalDataTypes::dtFloat);
+}
+
 void SvSignalEditor::setCurrentRepositories()
 {
-  ui->cbMajorRepository->setCurrentIndex(ui->cbMajorRepository->findData(_signal_major_repository_id));
-  ui->cbMinorRepository1->setCurrentIndex(ui->cbMinorRepository1->findData(_signal_minor_repository1_id));
-  ui->cbMinorRepository2->setCurrentIndex(ui->cbMinorRepository2->findData(_signal_minor_repository2_id));
-  ui->cbMinorRepository3->setCurrentIndex(ui->cbMinorRepository3->findData(_signal_minor_repository3_id));
+  ui->cbMajorRepository->setCurrentIndex(ui->cbMajorRepository->findData(_signal_params.major_repository_id));
+  ui->cbMinorRepository1->setCurrentIndex(ui->cbMinorRepository1->findData(_signal_params.minor_repository1_id));
+  ui->cbMinorRepository2->setCurrentIndex(ui->cbMinorRepository2->findData(_signal_params.minor_repository2_id));
+  ui->cbMinorRepository3->setCurrentIndex(ui->cbMinorRepository3->findData(_signal_params.minor_repository3_id));
 }
 
 void SvSignalEditor::accept()
@@ -174,29 +186,33 @@ void SvSignalEditor::accept()
   
 //  /* конец проверок */
   
-    _signal_name = ui->editName->text();
-    _signal_data_offset = ui->spinDataOffset->value();
-    _signal_data_length = ui->spinDataLength->value();
-    _signal_major_repository_id = ui->cbMajorRepository->currentData().toInt();
-    _signal_minor_repository1_id = ui->cbMinorRepository1->currentData().toInt();
-    _signal_minor_repository2_id = ui->cbMinorRepository2->currentData().toInt();
-    _signal_minor_repository3_id = ui->cbMinorRepository3->currentData().toInt();
-    _signal_description = ui->textDescription->toPlainText();
+    _signal_params.name = ui->editName->text();
+    _signal_params.timeout = ui->spinTimeout->value();
+    _signal_params.data_type = ui->cbDataType->currentData().toUInt();
+    _signal_params.data_offset = ui->spinDataOffset->value();
+    _signal_params.data_length = ui->spinDataLength->value();
+    _signal_params.major_repository_id = ui->cbMajorRepository->currentData().toInt();
+    _signal_params.minor_repository1_id = ui->cbMinorRepository1->currentData().toInt();
+    _signal_params.minor_repository2_id = ui->cbMinorRepository2->currentData().toInt();
+    _signal_params.minor_repository3_id = ui->cbMinorRepository3->currentData().toInt();
+    _signal_params.description = ui->textDescription->toPlainText();
   
     switch (_showMode) {
       
       case smNew: {
         
         QSqlError serr = SQLITE->execSQL(QString(SQL_NEW_SIGNAL)
-                                         .arg(_signal_device_id)
-                                         .arg(_signal_name)
-                                         .arg(_signal_data_offset)
-                                         .arg(_signal_data_length)
-                                         .arg(_signal_description)
-                                         .arg(_signal_major_repository_id)
-                                         .arg(_signal_minor_repository1_id)
-                                         .arg(_signal_minor_repository2_id)
-                                         .arg(_signal_minor_repository3_id));
+                                         .arg(_signal_params.device_id)
+                                         .arg(_signal_params.name)
+                                         .arg(_signal_params.timeout)
+                                         .arg(_signal_params.data_type)
+                                         .arg(_signal_params.data_offset)
+                                         .arg(_signal_params.data_length)
+                                         .arg(_signal_params.description)
+                                         .arg(_signal_params.major_repository_id)
+                                         .arg(_signal_params.minor_repository1_id)
+                                         .arg(_signal_params.minor_repository2_id)
+                                         .arg(_signal_params.minor_repository3_id));
         
         if(QSqlError::NoError != serr.type()) _exception.raise(serr.text());
         
@@ -206,16 +222,18 @@ void SvSignalEditor::accept()
       case smEdit: {
         
         QSqlError serr = SQLITE->execSQL(QString(SQL_UPDATE_SIGNAL)
-                                         .arg(_signal_device_id)
-                                         .arg(_signal_name)
-                                         .arg(_signal_data_offset)
-                                         .arg(_signal_data_length)
-                                         .arg(_signal_description)
-                                         .arg(_signal_major_repository_id)
-                                         .arg(_signal_minor_repository1_id)
-                                         .arg(_signal_minor_repository2_id)
-                                         .arg(_signal_minor_repository3_id)
-                                         .arg(_signal_id));
+                                         .arg(_signal_params.device_id)
+                                         .arg(_signal_params.name)
+                                         .arg(_signal_params.timeout)
+                                         .arg(_signal_params.data_type)
+                                         .arg(_signal_params.data_offset)
+                                         .arg(_signal_params.data_length)
+                                         .arg(_signal_params.description)
+                                         .arg(_signal_params.major_repository_id)
+                                         .arg(_signal_params.minor_repository1_id)
+                                         .arg(_signal_params.minor_repository2_id)
+                                         .arg(_signal_params.minor_repository3_id)
+                                         .arg(_signal_params.id));
         
         if(QSqlError::NoError != serr.type()) _exception.raise(serr.text());
   

@@ -1,7 +1,7 @@
 QT -= gui
 QT += serialport sql
 
-CONFIG += c++11 console
+CONFIG += c++14 console
 CONFIG -= app_bundle
 
 TARGET = stand_server
@@ -22,7 +22,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp \
     ../../svlib/sv_sqlite.cpp \
     ../oht/sv_oht.cpp \
-    ../../svlib/sv_clog.cpp
+    ../../svlib/sv_clog.cpp \
+    sv_dbgate.cpp \
+    ../global/sv_signal.cpp \
+    ../../svlib/sv_pgdb.cpp
 
 HEADERS += \
     ../../svlib/sv_exception.h \
@@ -30,4 +33,7 @@ HEADERS += \
     ../global/sv_idevice.h \
     ../oht/sv_oht.h \
     ../../svlib/sv_clog.h \
-    ../global/sql_defs.h
+    ../global/sql_defs.h \
+    sv_dbgate.h \
+    ../global/sv_signal.h \
+    ../../svlib/sv_pgdb.h
