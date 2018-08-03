@@ -33,6 +33,7 @@ struct SignalParams
   int minor_repository3_id = -1;
   
   int device_id = -1;
+  int device_data_length = -1;
   QString device_name = "";
   QString kts_name = "";
   

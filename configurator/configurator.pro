@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = configurator
 TEMPLATE = app
 
+CONFIG += c++14
+
 VERSION = 0.1.0    # major.minor.patch
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 

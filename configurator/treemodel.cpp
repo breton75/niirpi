@@ -101,8 +101,9 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
            || (item->info(index.column()).type == itSignalName))
           font.setBold(true);
 
-//        if(item->info(index.column()).type == itEmployeeLoadFact)
-//          if(item->item_state == TaskOnWork) font.setItalic(true);
+//        if(item->item_type == itSignalTypeAnalog)
+//          font.
+//          if(item->item_state == TaskOnWork) font.set(true);
 
         return font;
       }
@@ -120,8 +121,22 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
       case Qt::ForegroundRole:
       {
         QBrush color;
-         color.setColor(Qt::black);
-         
+        
+        switch (item->item_type) {
+          
+          case itSignalTypeAnalog:
+            color.setColor(Qt::green);
+            break;
+            
+          case itSignalTypeDiscrete:
+            color.setColor(Qt::darkBlue);
+            break;            
+            
+          default:
+            color.setColor(Qt::black);
+            break;
+        }
+        
 //        if(item->info(index.column()).type == itTaskSum)
 //          color.setColor(Qt::blue);
 
@@ -148,25 +163,25 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
         break; 
         
       case Qt::DecorationRole:
-        if(index.column() == 0)
-        {
-          switch (item->info(index.column()).type)
-          {
-            case itDevice:
-              return QIcon(":/munich/icons/munich-icons/ico/blue/task_kp.ico");
-              break;
+        if(index.column() == 0) {
+          
+          switch (item->item_type) {
+            
+//            case itDevice:  
+//              return QIcon(":/munich/icons/munich-icons/ico/blue/project_kp.ico");
+//              break;
               
-            case itSignal:
-              return QIcon(":/munich/icons/munich-icons/ico/blue/task_onwork.ico");
-              break;
+//            case itSignal:
+//              return QIcon(":/munich/icons/munich-icons/ico/blue/task_onwork.ico");
+//              break;
               
-            case itSignalType:
-              return QIcon(":/munich/icons/munich-icons/ico/blue/task_paused.ico");
-              break;
+//            case itSignalTypeAnalog:
+//              return QIcon(":/munich/icons/munich-icons/ico/blue/task_kp.ico");
+//              break;
               
-            case itDeviceIfcName:
-              return QIcon(":/tree/icons/tick.png");
-              break;
+//            case itDeviceIfcName:
+//              return QIcon(":/tree/icons/tick.png");
+//              break;
               
             default:
               break;

@@ -23,9 +23,9 @@ SOURCES += main.cpp \
     ../../svlib/sv_sqlite.cpp \
     ../oht/sv_oht.cpp \
     ../../svlib/sv_clog.cpp \
-    sv_dbgate.cpp \
     ../global/sv_signal.cpp \
-    ../../svlib/sv_pgdb.cpp
+    ../../svlib/sv_pgdb.cpp \
+    sv_repository.cpp
 
 HEADERS += \
     ../../svlib/sv_exception.h \
@@ -34,6 +34,6 @@ HEADERS += \
     ../oht/sv_oht.h \
     ../../svlib/sv_clog.h \
     ../global/sql_defs.h \
-    sv_dbgate.h \
     ../global/sv_signal.h \
-    ../../svlib/sv_pgdb.h
+    ../../svlib/sv_pgdb.h \
+    sv_repository.h

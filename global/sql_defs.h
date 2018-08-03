@@ -3,7 +3,7 @@
 
 #define CR "\n"
 
-#define DEVICES_TREE_HEADERS "|Датчик/Сигнал;|Размер данных (бит);|Смещение (бит);<Параметры;<Примечания" // <Тип интерфейса;<Протокол;<Интерфес;<Тип данных;"
+#define DEVICES_TREE_HEADERS "|Комплекс/Сигнал;|CAN_ID;|Размер данных (бит);|Смещение (бит);<Параметры;<Примечания" // <Тип интерфейса;<Протокол;<Интерфес;<Тип данных;"
 
 #define REPOSITORIES_TREE_HEADERS "|Репозиторий;|Сервер;|Порт;|Логин;|База данных;|Таблица"
 
@@ -86,6 +86,7 @@
   "SELECT signals.id as signal_id, " CR \
   "   signals.device_id as signal_device_id, " CR \
   "   signals.cob_id as signal_cob_id, " CR \
+  "   d.device_data_length as signal_device_data_length, " CR \
   "   d.device_name as signal_device_name, " CR \
   "   d.device_kts_name as signal_kts_name, " CR \
   "   signals.signal_name as signal_name, " CR \
@@ -154,6 +155,13 @@
 #define SQL_SELECT_ONE_REPOSITORY (SQL_SELECT_FROM_REPOSITORIES " WHERE repositories.id in (%1)")
 
 
+#define SQL_SELECT_COB_IDS \
+  "SELECT " CR \
+  "   signals.cob_id as signal_cob_id " CR \
+  "FROM signals " CR \
+  "GROUP BY signals.cob_id"
+
+
 #define SQL_NEW_KTS \
   "INSERT INTO ktss (kts_name, ifc_id, protocol_id, data_type, " CR \
   "data_length, driver_lib_path, description)" CR \
@@ -183,7 +191,7 @@
   "UPDATE repositories SET " CR \
   "   repository_name='%1', host='%2', port=%3, login='%4', pass='%5', " \
   "   dbname='%6', table_name='%7' " CR \
-  "WHERE id = %8"
+  "WHERE id = %8;"
 
 
 #define SQL_NEW_SIGNAL \
@@ -209,9 +217,8 @@
 
 /** *********** POSTGRES *************** **/
 
-#define SQL_UPDATE_REPOSITORY \
-  "UPDATE %1 SET value=%2, last_update='%3' " CR \
-  "WHERE cob_id = %4"
+#define SQL_UPDATE_VALUE \
+  "UPDATE %1 SET value=%2, last_update='%3' WHERE cob_id = %4;" CR
 
 
 

@@ -139,21 +139,24 @@ bool MainWindow::readConfig()
       root->child(child_count)->setData(0, q->value("device_name"));
       root->child(child_count)->setInfo(0, ItemInfo(itDeviceName, "device_name"));
       
-      root->child(child_count)->setData(1, q->value("device_data_length"));
-      root->child(child_count)->setInfo(1, ItemInfo(itDeviceDataLength, "device_data_length"));
+      root->child(child_count)->setData(1, QVariant());
+      root->child(child_count)->setInfo(1, ItemInfo(itUndefined, ""));
       
-      root->child(child_count)->setData(2, QVariant());
-      root->child(child_count)->setInfo(2, ItemInfo(itUndefined, ""));
+      root->child(child_count)->setData(2, q->value("device_data_length"));
+      root->child(child_count)->setInfo(2, ItemInfo(itDeviceDataLength, "device_data_length"));
       
-      root->child(child_count)->setData(3, QString("\nИнтерфейс:\t%1\nПротокол:\t%2\nПараметры:\t%3\nТип данных:\t%4")
+      root->child(child_count)->setData(3, QVariant());
+      root->child(child_count)->setInfo(3, ItemInfo(itUndefined, ""));
+      
+      root->child(child_count)->setData(4, QString("\nИнтерфейс:\t%1\nПротокол:\t%2\nПараметры:\t%3\nТип данных:\t%4")
                                           .arg(q->value("device_ifc_name").toString())
                                           .arg(q->value("device_protocol_name").toString())
                                           .arg(q->value("device_connection_params").toString())
                                           .arg(q->value("device_data_type_name").toString()));
-      root->child(child_count)->setInfo(3, ItemInfo(itDeviceParams, ""));
+      root->child(child_count)->setInfo(4, ItemInfo(itDeviceParams, ""));
       
-      root->child(child_count)->setData(4, q->value("device_description").toString());
-      root->child(child_count)->setInfo(4, ItemInfo(itDeviceDescription, "device_description"));
+      root->child(child_count)->setData(5, q->value("device_description").toString());
+      root->child(child_count)->setInfo(5, ItemInfo(itDeviceDescription, "device_description"));
       
 //      for (int column = 0; column < column_count; column++) {
         
@@ -202,31 +205,41 @@ bool MainWindow::readConfig()
         device->child(child_count)->parent_id = device->id;
         device->child(child_count)->is_main_row = false; //q->value("task_type").toInt() == 1; //  q->value("parent_task_id").toInt() == -1;
   //        root->child(child_count)->item_state = q->value("last_state").toInt();
-        device->child(child_count)->item_type = itSignal;
+        device->child(child_count)->item_type = q->value("signal_data_type").toInt() == 0 ? itSignalTypeDiscrete : itSignalTypeAnalog;
   
         device->child(child_count)->setData(0, q->value("signal_name"));
-        device->child(child_count)->setData(1, q->value("signal_data_length"));
-        device->child(child_count)->setData(2, q->value("signal_data_offset"));
-        device->child(child_count)->setData(4, q->value("signal_description"));
+        device->child(child_count)->setInfo(0, ItemInfo(itSignalName, "signal_name"));
         
-        for (int column = 0; column < column_count; column++) {
-          
-          QString field_name = q->record().fieldName(column);
-          
-          ItemInfo inf;
-          
-          if(field_name == "signal_id")                     inf.type = itSignalId;
-          else if(field_name == "signal_name")              inf.type = itSignalName;
-          else if(field_name == "signal_data_length")       inf.type = itSignalDataLenght;
-          else if(field_name == "signal_data_offset")       inf.type = itSignalOffset;
-          else if(field_name == "signal_description")       inf.type = itSignalDescription;
-          else                                              inf.type = itUndefined;
-          
-          inf.fieldName = field_name;
-          
-          device->child(child_count)->setInfo(column, inf);
+        device->child(child_count)->setData(1, q->value("signal_cob_id"));
+        device->child(child_count)->setInfo(1, ItemInfo(itSignalCANID, "signal_cob_id"));
         
-        }
+        device->child(child_count)->setData(2, q->value("signal_data_length"));
+        device->child(child_count)->setInfo(2, ItemInfo(itDeviceDataLength, "signal_data_length"));
+        
+        device->child(child_count)->setData(3, q->value("signal_data_offset"));
+        device->child(child_count)->setInfo(1, ItemInfo(itSignalOffset, "signal_data_offset"));
+        
+        device->child(child_count)->setData(5, q->value("signal_description"));
+        device->child(child_count)->setInfo(5, ItemInfo(itSignalDescription, "signal_description"));
+        
+//        for (int column = 0; column < column_count; column++) {
+          
+//          QString field_name = q->record().fieldName(column);
+          
+//          ItemInfo inf;
+          
+//          if(field_name == "signal_id")                     inf.type = itSignalId;
+//          else if(field_name == "signal_name")              inf.type = itSignalName;
+//          else if(field_name == "signal_data_length")       inf.type = itSignalDataLenght;
+//          else if(field_name == "signal_data_offset")       inf.type = itSignalOffset;
+//          else if(field_name == "signal_description")       inf.type = itSignalDescription;
+//          else                                              inf.type = itUndefined;
+          
+//          inf.fieldName = field_name;
+          
+//          device->child(child_count)->setInfo(column, inf);
+        
+//        }
       }
       
       q->finish();
@@ -421,7 +434,8 @@ void MainWindow::newSignal()
       device_id = _model->itemFormIndex(ui->treeView->currentIndex())->id;
       break;
       
-    case itSignal:
+    case itSignalTypeAnalog:
+    case itSignalTypeDiscrete:
       device_id = _model->itemFormIndex(ui->treeView->currentIndex())->parent_id;
       break;
       
@@ -457,7 +471,8 @@ void MainWindow::editSignal()
   
   switch (_model->itemFormIndex(ui->treeView->currentIndex())->item_type) {
       
-    case itSignal:
+    case itSignalTypeAnalog:
+    case itSignalTypeDiscrete:
       signal_id = _model->itemFormIndex(ui->treeView->currentIndex())->id;
       device_id = _model->itemFormIndex(ui->treeView->currentIndex())->parent_id;
       break;

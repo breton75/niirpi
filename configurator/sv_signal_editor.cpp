@@ -69,7 +69,7 @@ SvSignalEditor::SvSignalEditor(QWidget *parent, int deviceId, int id) :
     _signal_params.id = q->value("signal_id").toInt();
     _signal_params.name = q->value("signal_name").toString();
     _signal_params.timeout = q->value("signal_timeout").toInt();
-    _signal_params.data_type = q->value("signal_data_type").toInt();
+    _signal_params.data_type = SignalDataTypes(q->value("signal_data_type").toInt());
     _signal_params.data_offset = q->value("signal_data_offset").toUInt();
     _signal_params.data_length = q->value("signal_data_length").toUInt();
     _signal_params.description = q->value("signal_description").toString(); 
@@ -140,10 +140,25 @@ bool SvSignalEditor::loadRepositories()
 
   while(q->next()) {
     
-    ui->cbMajorRepository->addItem(q->value("repository_name").toString(), q->value("repository_id").toInt());
-    ui->cbMinorRepository1->addItem(q->value("repository_name").toString(), q->value("repository_id").toInt());
-    ui->cbMinorRepository2->addItem(q->value("repository_name").toString(), q->value("repository_id").toInt());
-    ui->cbMinorRepository3->addItem(q->value("repository_name").toString(), q->value("repository_id").toInt());
+    ui->cbMajorRepository->addItem( QString("%1:%2:%3")
+                                    .arg(q->value("repository_name").toString())
+                                    .arg(q->value("repository_host").toString())
+                                    .arg(q->value("repository_port").toString()), q->value("repository_id").toInt());
+    
+    ui->cbMinorRepository1->addItem(QString("%1:%2:%3")
+                                    .arg(q->value("repository_name").toString())
+                                    .arg(q->value("repository_host").toString())
+                                    .arg(q->value("repository_port").toString()), q->value("repository_id").toInt());
+    
+    ui->cbMinorRepository2->addItem(QString("%1:%2:%3")
+                                    .arg(q->value("repository_name").toString())
+                                    .arg(q->value("repository_host").toString())
+                                    .arg(q->value("repository_port").toString()), q->value("repository_id").toInt());
+    
+    ui->cbMinorRepository3->addItem(QString("%1:%2:%3")
+                                    .arg(q->value("repository_name").toString())
+                                    .arg(q->value("repository_host").toString())
+                                    .arg(q->value("repository_port").toString()), q->value("repository_id").toInt());
     
   }
   
@@ -188,7 +203,7 @@ void SvSignalEditor::accept()
   
     _signal_params.name = ui->editName->text();
     _signal_params.timeout = ui->spinTimeout->value();
-    _signal_params.data_type = ui->cbDataType->currentData().toUInt();
+    _signal_params.data_type = SignalDataTypes(ui->cbDataType->currentData().toUInt());
     _signal_params.data_offset = ui->spinDataOffset->value();
     _signal_params.data_length = ui->spinDataLength->value();
     _signal_params.major_repository_id = ui->cbMajorRepository->currentData().toInt();

@@ -8,6 +8,9 @@
 #include <QMetaType>
 #include <QtSerialPort/QSerialPort>
 #include <QDebug>
+
+#include "sv_signal.h"
+
 namespace idev {
 
   enum DeviceTypes {
@@ -61,7 +64,7 @@ class idev::SvIDevice : public QObject
     Q_OBJECT
     
 public:
-  SvIDevice() { }
+  SvIDevice() { clearSignals(); }
   
   virtual ~SvIDevice() { }
   
@@ -90,9 +93,16 @@ public:
   virtual bool write(const QByteArray* data) = 0;
   virtual QByteArray read() = 0;
   
+  void addSignal(SvSignal* signal) { _signals.insert(signal->params()->id, signal); }
+  void clearSignals() { _signals.clear(); }
+  QMap<int, SvSignal*>* getSignals() { return &_signals; }
+  int signalsCount() { return _signals.count(); }
+  
 private:
   idev::DeviceConfig _config;
 
+  QMap<int, SvSignal*> _signals;
+  
 protected:
   quint32 _id;
   idev::DeviceTypes _type;

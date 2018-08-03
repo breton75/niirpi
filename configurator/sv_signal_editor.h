@@ -50,7 +50,7 @@ private:
   
 private slots:
   void newRepoisitory();
-  
+  bool loadDataTypes();
   bool loadRepositories();
   
 };
